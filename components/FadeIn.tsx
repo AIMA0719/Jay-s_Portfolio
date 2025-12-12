@@ -1,5 +1,5 @@
 import React from 'react';
-import { motion } from 'framer-motion';
+import { motion, Variants } from 'framer-motion';
 
 interface FadeInProps {
   children: React.ReactNode;
@@ -9,7 +9,7 @@ interface FadeInProps {
 }
 
 const FadeIn: React.FC<FadeInProps> = ({ children, delay = 0, className = "", direction = 'up' }) => {
-  const variants = {
+  const variants: Variants = {
     hidden: { 
       opacity: 0, 
       y: direction === 'up' ? 20 : direction === 'down' ? -20 : 0,
