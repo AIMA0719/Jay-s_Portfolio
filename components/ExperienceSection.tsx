@@ -1,53 +1,168 @@
 import React from 'react';
 import { EXPERIENCES } from '../constants';
 import FadeIn from './FadeIn';
+import { CheckCircle2, Trophy, Code2, Wrench, AlertTriangle, Layers, Laptop } from 'lucide-react';
 
 const ExperienceSection: React.FC = () => {
-  return (
-    <section className="min-h-screen flex items-center py-20 px-6 bg-slate-50 overflow-y-auto">
-      <div className="max-w-5xl mx-auto w-full h-full flex flex-col justify-center">
-        <FadeIn className="mb-8 md:mb-12 shrink-0">
-          <h2 className="text-4xl font-bold text-slate-900 mb-2">경력 상세</h2>
-          <p className="text-slate-500 text-lg">성장의 기록들</p>
-        </FadeIn>
+  const exp = EXPERIENCES[0]; // Infocar
 
-        <div className="p-8 bg-white rounded-[2rem] shadow-sm border border-slate-100 h-auto">
-            <div className="flex flex-col md:flex-row md:items-baseline justify-between mb-6 border-b border-slate-100 pb-4 shrink-0">
-                <div>
-                    <h3 className="text-2xl font-bold text-primary-700 mb-1">
-                    {EXPERIENCES[0].company}
-                    </h3>
-                    <span className="font-medium text-slate-900 text-lg">{EXPERIENCES[0].role}</span>
-                </div>
-                <span className="mt-2 md:mt-0 px-4 py-1.5 bg-slate-100 rounded-full text-slate-600 font-semibold text-sm">
-                    {EXPERIENCES[0].period}
-                </span>
+  return (
+    <section className="min-h-screen py-24 px-6 bg-slate-50">
+      <div className="max-w-5xl mx-auto">
+        {/* Header Section */}
+        <FadeIn className="mb-12">
+          <h2 className="text-4xl font-extrabold text-slate-900 mb-8 border-l-8 border-primary-600 pl-6 py-1">
+            안드로이드 개발자 포트폴리오 - 경력 상세
+          </h2>
+
+          <div className="bg-white rounded-2xl p-8 border border-slate-200 shadow-sm">
+            <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-slate-100 pb-6 mb-6">
+              <div>
+                <h3 className="text-3xl font-extrabold text-slate-900 mb-2">{exp.company}</h3>
+                <p className="text-2xl text-primary-600 font-bold">{exp.role}</p>
+              </div>
+              <div className="text-slate-500 font-medium text-lg bg-slate-50 px-4 py-2 rounded-lg border border-slate-200">
+                {exp.period}
+              </div>
             </div>
             
-            {EXPERIENCES[0].description && (
-                <p className="text-lg text-slate-700 mb-8 leading-relaxed font-medium bg-slate-50 p-4 rounded-xl border border-slate-100 shrink-0">
-                {EXPERIENCES[0].description}
-                </p>
-            )}
-
-            <div className="space-y-8">
-              {EXPERIENCES[0].highlights.map((highlight, idx) => (
-                <div key={idx} className="relative pl-6 border-l-2 border-slate-200 hover:border-primary-400 transition-colors duration-300">
-                  <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-2 mb-2">
-                    <h4 className="text-lg font-bold text-slate-900 group-hover:text-primary-700 transition-colors">
-                      {highlight.title}
-                    </h4>
-                    <span className="text-sm font-bold text-primary-600 bg-primary-50 px-2 py-0.5 rounded border border-primary-100 self-start shrink-0">
-                        {highlight.impact}
-                    </span>
-                  </div>
-                  <p className="text-slate-600 leading-relaxed text-base">
-                    {highlight.detail}
-                  </p>
+            {/* Overview Stats */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {exp.overviewStats.map((item, idx) => (
+                <div key={idx} className="flex items-start gap-3 text-slate-700 font-medium">
+                  <div className="mt-2 w-1.5 h-1.5 rounded-full bg-primary-500 shrink-0" />
+                  <span className="leading-relaxed">{item}</span>
                 </div>
               ))}
             </div>
           </div>
+        </FadeIn>
+
+        {/* Projects List */}
+        <div className="space-y-16">
+          {exp.projects.map((project, idx) => (
+            <FadeIn key={idx} delay={idx * 0.05}>
+              <div className="bg-white rounded-[2rem] p-8 md:p-10 border border-slate-200 shadow-sm hover:border-primary-200 transition-colors">
+                
+                {/* Project Header */}
+                <div className="mb-8 border-b border-slate-100 pb-8">
+                  <h3 className="text-2xl md:text-3xl font-bold text-slate-900 mb-4 flex items-center gap-3">
+                    <span className="w-10 h-10 rounded-xl bg-slate-900 text-white flex items-center justify-center text-lg font-bold shrink-0 shadow-md">
+                      {idx + 1}
+                    </span>
+                    {project.title.replace(/^\d+\.\s/, '')}
+                  </h3>
+                  
+                  <div className="space-y-4">
+                    <div>
+                      <h4 className="font-bold text-slate-900 mb-2 text-sm uppercase tracking-wide opacity-70">Project Overview</h4>
+                      <p className="text-slate-700 text-lg leading-relaxed">
+                        {project.overview}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Tech Stack Chips */}
+                <div className="mb-8">
+                  <div className="flex flex-wrap gap-2">
+                    {project.techStack.map((tech, i) => (
+                      <span key={i} className="px-3 py-1.5 bg-slate-100 text-slate-700 rounded-lg text-sm font-semibold border border-slate-200">
+                        {tech}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+                  {/* Left Column */}
+                  <div className="space-y-8">
+                    {/* Quantitative Stats */}
+                    {project.quantitative && project.quantitative.length > 0 && (
+                      <div>
+                        <h4 className="flex items-center gap-2 font-bold text-slate-900 mb-4 text-sm uppercase tracking-wide">
+                          <Trophy size={18} className="text-amber-500" /> 정량적 성과
+                        </h4>
+                        <ul className="space-y-3">
+                          {project.quantitative.map((item, i) => (
+                            <li key={i} className="text-slate-700 flex items-start gap-2.5 bg-amber-50/50 p-3 rounded-xl border border-amber-100">
+                              <span className="mt-2 w-1.5 h-1.5 rounded-full bg-amber-500 shrink-0" />
+                              <span className="leading-snug">{item}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+
+                    {/* Roles */}
+                    {project.roles && project.roles.length > 0 && (
+                      <div>
+                        <h4 className="flex items-center gap-2 font-bold text-slate-900 mb-4 text-sm uppercase tracking-wide">
+                          <CheckCircle2 size={18} className="text-blue-500" /> 담당 역할
+                        </h4>
+                        <ul className="space-y-2">
+                          {project.roles.map((item, i) => (
+                            <li key={i} className="text-slate-600 flex items-start gap-2.5">
+                              <span className="mt-2 w-1.5 h-1.5 rounded-full bg-blue-400 shrink-0" />
+                              <span className="leading-snug">{item}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Right Column */}
+                  <div className="space-y-8">
+                    {/* Core Implementation */}
+                    {project.coreImplementations && project.coreImplementations.length > 0 && (
+                      <div>
+                        <h4 className="flex items-center gap-2 font-bold text-slate-900 mb-4 text-sm uppercase tracking-wide">
+                          <Code2 size={18} className="text-emerald-500" /> 핵심 구현
+                        </h4>
+                        <div className="space-y-4">
+                          {project.coreImplementations.map((impl, i) => (
+                            <div key={i} className="bg-slate-50 rounded-xl p-4 border border-slate-200">
+                              <div className="font-bold text-slate-800 text-sm mb-2">{impl.title}</div>
+                              <ul className="pl-4 list-disc list-outside text-sm text-slate-600 space-y-1.5 marker:text-slate-400">
+                                {impl.items.map((item, j) => (
+                                  <li key={j}>{item}</li>
+                                ))}
+                              </ul>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Problem Solving */}
+                    {project.problemSolving && (
+                      <div>
+                         <h4 className="flex items-center gap-2 font-bold text-slate-900 mb-4 text-sm uppercase tracking-wide">
+                          <Wrench size={18} className="text-purple-500" /> 문제 해결 사례
+                        </h4>
+                        <div className="bg-slate-50 rounded-xl p-5 border border-slate-200 space-y-3 text-sm">
+                            <div className="flex gap-3">
+                                <span className="font-bold text-slate-500 w-12 shrink-0 text-right">문제</span>
+                                <span className="text-slate-700 leading-relaxed border-l-2 border-slate-200 pl-3">{project.problemSolving.problem}</span>
+                            </div>
+                            <div className="flex gap-3">
+                                <span className="font-bold text-blue-600 w-12 shrink-0 text-right">해결</span>
+                                <span className="text-slate-800 leading-relaxed border-l-2 border-blue-200 pl-3">{project.problemSolving.solution}</span>
+                            </div>
+                            <div className="flex gap-3 pt-2 mt-1 border-t border-slate-100">
+                                <span className="font-bold text-emerald-600 w-12 shrink-0 text-right">결과</span>
+                                <span className="text-slate-800 font-medium leading-relaxed border-l-2 border-emerald-200 pl-3">{project.problemSolving.result}</span>
+                            </div>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </FadeIn>
+          ))}
+        </div>
       </div>
     </section>
   );

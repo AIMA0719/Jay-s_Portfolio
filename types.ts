@@ -1,14 +1,40 @@
 import React from 'react';
 import { LucideIcon } from 'lucide-react';
 
+// --- New Types for Detailed Career Section ---
+
+export interface CoreImplementation {
+  title: string;
+  items: string[];
+}
+
+export interface ProblemSolving {
+  problem: string;
+  solution: string;
+  result: string;
+}
+
+export interface CareerProject {
+  title: string;
+  overview: string;
+  quantitative?: string[];
+  roles?: string[];
+  techStack: string[];
+  coreImplementations?: CoreImplementation[];
+  problemSolving?: ProblemSolving;
+  additionalInfo?: { title: string; items: string[] }[]; // For things like Bluetooth stats
+}
+
 export interface Experience {
   id: string;
   company: string;
   role: string;
   period: string;
-  description: string;
-  highlights: Highlight[];
+  overviewStats: string[];
+  projects: CareerProject[];
 }
+
+// --- Existing Types for Bento Grid (Preserved) ---
 
 export interface Highlight {
   title: string;
@@ -21,25 +47,35 @@ export interface Skill {
   items: string[];
 }
 
+export interface TaskCategory {
+  title: string;
+  items: string[];
+}
+
+export interface Challenge {
+  title: string;
+  problem: string;
+  solution: string;
+  result?: string; // Optional result field for challenges if needed
+}
+
 export interface ProjectDetail {
   period: string;
   background: string;
-  tasks: string[]; // List of specific tasks
-  techStack: string[]; // Specific techs used
-  challenges?: string[]; // Technical challenges
-  results?: string[]; // Outcomes
+  tasks: TaskCategory[];
+  techStack: string[];
+  challenges: Challenge[];
+  results: string[];
 }
 
 export interface BentoItemProps {
   id: string;
   title: string;
   subtitle?: string;
-  description: string; // Short description for the card
+  description: string;
   icon: LucideIcon;
-  cols?: number; // Span columns
-  rows?: number; // Span rows
+  cols?: number;
+  rows?: number;
   dark?: boolean;
-  
-  // New field for the detailed modal
   details: ProjectDetail;
 }
