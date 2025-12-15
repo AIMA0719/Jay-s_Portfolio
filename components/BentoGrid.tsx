@@ -107,7 +107,10 @@ const BentoGrid: React.FC = () => {
                     </h4>
                     <div className="flex flex-wrap gap-2">
                         {selectedItem.details.techStack.map((tech, idx) => (
-                            <span key={idx} className="px-3 py-1 bg-white border border-slate-200 rounded-lg text-xs font-semibold text-slate-600 shadow-sm">
+                            <span 
+                              key={idx} 
+                              className="px-3 py-1 bg-white border border-slate-200 rounded-lg text-xs font-semibold text-slate-600 shadow-sm cursor-pointer hover:bg-slate-100 hover:text-primary-600 hover:border-primary-200 transition-colors"
+                            >
                                 {tech}
                             </span>
                         ))}
