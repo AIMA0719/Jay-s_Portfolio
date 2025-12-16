@@ -1013,12 +1013,8 @@ export const EXPERIENCES: Experience[] = [
     role: "Android 담당자 / 전임 연구원",
     period: "2022.10 ~ 현재",
     overviewStats: [
-      "OBD-II 기반 차량 진단 앱 개발 및 유지보수",
-      "Kotlin/MVVM/Coroutines 기반 앱 아키텍처 설계",
-      "GitHub Actions CI/CD 파이프라인 구축으로 배포 자동화",
-      "Android Auto 연동 및 BLE 통신 프로토콜 구현",
-      "15개국 다국어 지원, 글로벌 서비스 운영",
-      "2개 제품군(일반/기업용) 단일 코드베이스 관리"
+      "사용자 경험 중심의 앱 아키텍처 설계와 끊임없는 성능 개선을 통해,",
+      "안정적이고 지속 가능한 글로벌 모바일 서비스를 만들어갑니다."
     ],
     projects: BENTO_ITEMS
       .filter(item => item.id !== 'dual-app')

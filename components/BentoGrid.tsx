@@ -171,30 +171,55 @@ const PhysicsBento: React.FC = () => {
     };
   }, []);
 
-  // 화면 리사이즈 대응 (버블이 화면 밖으로 나가는 것 방지)
+  // 화면 리사이즈 대응 및 반경 업데이트
   useEffect(() => {
     const handleResize = () => {
       if (!containerRef.current) return;
       const { width, height } = containerRef.current.getBoundingClientRect();
 
+      // 화면 너비에 따른 스케일 계산
+      let currentScale = 1;
+      if (width < 768) currentScale = 0.55; // 모바일
+      else if (width < 1024) currentScale = 0.75; // 태블릿
+
+      // React State 업데잇
+      // (여기서는 성능을 위해 Ref로 관리하거나, 간단히 forceUpdate를 유도할 수도 있지만
+      //  Physics loop에서 DOM 스타일을 직접 찍으므로, DOM 크기만 맞춰주면 됨.
+      //  하지만 컴포넌트 렌더링 시 sizePx 계산을 위해 state가 필요함.)
+      //  -> 간단히 window resize 시 전체 리렌더링이 일어나도록 하거나,
+      //     여기서는 버블 초기화 로직을 다시 태우는 게 깔끔함.
+
+      // 버블 크기 및 위치 재조정
       bubblesRef.current.forEach(b => {
+        // 원래 반경 복원 후 스케일 적용 (2 cols: 140, 1 col: 100)
+        // b.radius는 가변적이므로, ID나 기타 속성으로 원본 크기를 유추해야 함.
+        // 여기서는 BENTO_ITEMS 순서가 보장되므로 인덱스로 매핑 가능하지만,
+        // 안전하게 mass(초기 radius와 동일)를 기준으로 다시 계산
+        const baseRadius = b.mass; // mass는 초기 radius로 설정했음
+        b.radius = baseRadius * currentScale;
+
+        // 화면 밖으로 나가는 것 방지
         b.x = Math.min(Math.max(b.x, b.radius), width - b.radius);
         b.y = Math.min(Math.max(b.y, b.radius), height - b.radius);
       });
     };
+
     window.addEventListener('resize', handleResize);
+    // 초기 실행
+    handleResize();
+
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
   return (
     <section className="min-h-screen relative overflow-hidden bg-slate-50 flex flex-col">
       {/* Title Area */}
-      <div className="pt-24 pb-8 text-center z-10 pointer-events-none">
+      <div className="pt-24 pb-8 text-center z-10 pointer-events-none px-4">
         <h2 className="text-4xl md:text-6xl font-extrabold text-slate-900 mb-4 tracking-tight">
           Project Universe
         </h2>
-        <p className="text-slate-600 text-xl max-w-2xl mx-auto">
-          톡톡 튀는 아이디어들이 모여 만들어낸 결과물입니다.<br />
+        <p className="text-slate-600 text-lg md:text-xl max-w-2xl mx-auto break-keep">
+          톡톡 튀는 아이디어들이 모여 만들어낸 결과물입니다.<br className="hidden md:block" />
           원을 클릭하여 상세 내용을 확인하세요.
         </p>
       </div>
@@ -202,13 +227,11 @@ const PhysicsBento: React.FC = () => {
       {/* Physics Container */}
       <div
         ref={containerRef}
-        className="flex-1 w-full h-[80vh] relative overflow-hidden"
+        className="flex-1 w-full h-[60vh] md:h-[80vh] relative overflow-hidden touch-none"
       >
         {BENTO_ITEMS.map((item, index) => {
           const colorTheme = BRIGHT_COLORS[index % BRIGHT_COLORS.length];
           const isLarge = item.cols === 2;
-          // 지름 = 반지름 * 2
-          const sizePx = isLarge ? 280 : 200;
 
           return (
             <div
@@ -216,42 +239,46 @@ const PhysicsBento: React.FC = () => {
               ref={(el) => (elementsRef.current[index] = el)}
               onClick={() => handleProjectClick(item.id)}
               style={{
-                width: sizePx,
-                height: sizePx,
                 position: 'absolute',
                 top: 0,
                 left: 0,
-                willChange: 'transform' // 성능 최적화
+                willChange: 'transform, width, height',
               }}
+              // Tailwind 클래스로 반응형 크기 지정 (Physics 엔진의 Radius와 일치해야 함)
+              // PC: Norm 200(r100), Large 280(r140)
+              // Tab(0.75): Norm 150(r75), Large 210(r105)
+              // Mob(0.55): Norm 110(r55), Large 154(r77)
               className={`
+                w-[110px] h-[110px] md:w-[150px] md:h-[150px] lg:w-[200px] lg:h-[200px]
+                ${isLarge ? 'w-[154px] h-[154px] md:w-[210px] md:h-[210px] lg:w-[280px] lg:h-[280px]' : ''}
                 rounded-full border-4 cursor-pointer shadow-lg
-                flex flex-col items-center justify-center text-center p-4
+                flex flex-col items-center justify-center text-center p-2 md:p-4
                 transition-shadow duration-300 hover:shadow-2xl hover:z-50
                 ${colorTheme.bg} ${colorTheme.border} ${colorTheme.text}
               `}
             >
-              <div className={`p-3 rounded-full mb-3 ${colorTheme.iconBg} ${colorTheme.iconColor} shadow-sm`}>
+              <div className={`p-2 md:p-3 rounded-full mb-1 md:mb-3 ${colorTheme.iconBg} ${colorTheme.iconColor} shadow-sm scale-75 md:scale-100`}>
                 <item.icon size={isLarge ? 32 : 24} strokeWidth={2.5} />
               </div>
 
-              <h3 className={`font-bold leading-tight mb-1 px-2 ${isLarge ? 'text-2xl' : 'text-lg'}`}>
+              <h3 className={`font-bold leading-tight mb-0.5 md:mb-1 px-1 md:px-2 ${isLarge ? 'text-sm md:text-2xl' : 'text-xs md:text-lg'}`}>
                 {item.title}
               </h3>
 
-              <p className="text-xs font-semibold opacity-70 mb-3 px-2 line-clamp-1">
+              <p className="text-[10px] md:text-xs font-semibold opacity-70 mb-1 md:mb-3 px-1 md:px-2 line-clamp-1 hidden sm:block">
                 {item.subtitle}
               </p>
 
-              <div className="flex flex-wrap justify-center gap-1">
+              <div className="flex flex-wrap justify-center gap-1 opacity-80 md:opacity-100">
                 {item.details.techStack.slice(0, 2).map((tech, i) => (
-                  <span key={i} className="text-[10px] bg-white/60 px-2 py-0.5 rounded-full font-bold uppercase">
+                  <span key={i} className="text-[8px] md:text-[10px] bg-white/60 px-1.5 py-0.5 rounded-full font-bold uppercase">
                     {tech}
                   </span>
                 ))}
               </div>
 
               {/* Hover Hint */}
-              <div className="absolute bottom-6 opacity-0 hover:opacity-100 transition-opacity">
+              <div className="absolute bottom-6 opacity-0 hover:opacity-100 transition-opacity hidden md:block">
                 <ArrowUpRight className={colorTheme.iconColor} />
               </div>
             </div>
