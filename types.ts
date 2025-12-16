@@ -19,6 +19,7 @@ export interface CareerProject {
   title: string;
   subtitle?: string; // Restored for legacy modal
   icon?: any; // Restored for legacy modal (LucideIcon)
+  period?: string; // Mapped from Bento details
   overview: string;
   background?: string; // From Bento details
   quantitative?: string[];

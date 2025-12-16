@@ -63,7 +63,7 @@ const ProjectDetailModal: React.FC<ProjectDetailModalProps> = ({ isOpen, onClose
 
                             <div className="flex items-center gap-2 text-slate-500 text-sm font-medium mb-10 bg-white px-4 py-2 rounded-lg border border-slate-200 self-start shadow-sm">
                                 <Calendar size={16} />
-                                <span>2025.12</span> {/* Or period if available in project */}
+                                <span>{project.period}</span>
                             </div>
 
                             <div>

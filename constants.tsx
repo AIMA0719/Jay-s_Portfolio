@@ -1025,6 +1025,7 @@ export const EXPERIENCES: Experience[] = [
         title: `${index + 1}. ${item.title}`,
         subtitle: item.subtitle,
         icon: item.icon,
+        period: item.details.period,
         overview: item.description,
         background: item.details.background,
         quantitative: [], // We use 'results' for the key achievements now
