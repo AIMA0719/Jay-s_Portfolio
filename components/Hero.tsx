@@ -17,13 +17,6 @@ const Hero: React.FC = () => {
           </h1>
         </FadeIn>
 
-        <FadeIn delay={0.4}>
-          <div className="space-y-4">
-            <p className="text-lg md:text-xl text-slate-500 max-w-2xl mx-auto leading-relaxed">
-              앱 개발자로서의 <span className="text-primary-600 font-bold">워크 로드</span>를 소개합니다.
-            </p>
-          </div>
-        </FadeIn>
       </div>
 
       <FadeIn delay={1.0} className="absolute bottom-12 left-1/2 -translate-x-1/2 animate-bounce text-slate-400">

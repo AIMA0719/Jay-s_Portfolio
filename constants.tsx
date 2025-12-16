@@ -678,7 +678,7 @@ export const EXPERIENCES: Experience[] = [
     id: "infocar",
     company: "주식회사 인포카",
     role: "Android 담당자 / 전임 연구원",
-    period: "2022.10 ~ 현재",
+    period: "2022.08 ~ 현재",
     overviewStats: [
       "사용자 경험 중심의 앱 아키텍처 설계와 끊임없는 성능 개선을 통해,",
       "안정적이고 지속 가능한 글로벌 모바일 서비스를 만들어갑니다."
