@@ -529,6 +529,102 @@ export const EXPERIENCES: Experience[] = [
             ]
           }
         ]
+      },
+      {
+        id: 'auto',
+        title: "11. 안드로이드 오토 (Android Auto)",
+        background: "운전 중에는 내비게이션 앱(Tmap, KakaoNavi)이 화면을 점유하고 있어, 인포카 앱의 대시보드를 확인하기 위해 앱을 전환하는 것은 매우 위험합니다. 사용자가 내비게이션을 보면서 동시에 차량의 핵심 상태(속도, 연비, 방향지시등)를 안전하게 확인할 수 있도록 'Floating UI(오버레이)' 기능 개발이 시급했습니다.",
+        overview: "차량 디스플레이용 인포테인먼트 앱 서비스. Google Auto SDK 기반 대시보드 및 진단 기능 구현.",
+        quantitative: [
+          "관련 커밋: 45회",
+          "구글 플레이 Auto 카테고리 등록 완료"
+        ],
+        roles: [
+          "Android Auto SDK 연동",
+          "CarAppService 생명주기 관리",
+          "운전자 주의 분산 방지(DO) UI 가이드라인 준수"
+        ],
+        techStack: ["Android Auto SDK", "CarAppService", "Session", "Screen", "Kotlin", "LiveData"],
+        coreImplementations: [
+          {
+            title: "Android Auto 화면 구현",
+            items: [
+              "표준 대시보드 화면: 속도, RPM, 연비 등 기본 OBD 데이터 표시",
+              "제조사 대시보드 화면: 프리미엄 사용자용 상세 데이터 표시",
+              "메뉴 구조: 대시보드 → 표준/제조사 선택 화면"
+            ]
+          },
+          {
+            title: "연결 상태 및 Context 관리",
+            items: [
+              "Android Auto 전용 CarContext 사용 및 수명주기 관리",
+              "OBD 연결 끊김 시 자동 재연결 및 UI 업데이트"
+            ]
+          }
+        ],
+        challenges: [
+          {
+            title: "제한된 UI 컴포넌트",
+            problem: "Android Auto는 안전을 위해 사용 가능한 UI 컴포넌트(Template)가 매우 제한적(List, Grid, Pane 등)이어서 자유로운 커스텀이 불가능했습니다.",
+            solution: "Pane, Row, GridItem 등 허용된 컴포넌트의 조합을 연구하여 최적의 정보 밀도를 가진 대시보드 레이아웃을 재구성했습니다."
+          },
+          {
+            title: "앱-Auto 상태 동기화",
+            problem: "모바일 앱에서 단위를 변경하거나 설정을 바꿨을 때, 연결된 Android Auto 화면에 즉시 반영되지 않는 문제가 있었습니다.",
+            solution: "SharedPreferences 변경 리스너(OnSharedPreferenceChangeListener)를 등록하여 설정 변경 시 Auto 화면의 `invalidate()`를 호출해 UI를 즉시 갱신하도록 동기화 로직을 구현했습니다."
+          }
+        ],
+        results: [
+          "Android Auto 지원으로 신규 사용자 유입 및 앱 사용성 확장",
+          "운전 중 안전한 데이터 확인 가능 (핸드폰 조작 불필요)",
+          "Google Play Auto 카테고리 등록으로 노출 증대"
+        ]
+      },
+      {
+        id: 'registration',
+        title: "12. 차량 등록 시스템",
+        background: "사용자가 일일이 차량 정보를 입력하는 번거로움을 줄이기 위해, 차대번호(VIN)만으로 차량 정보를 자동 완성하는 시스템이 필요했습니다. VIN(Vehicle Identification Number)을 활용하여 차량 정보를 자동으로 입력하고, 직관적인 UI로 등록 과정을 간소화해야 했습니다.",
+        overview: "VIN(차대번호) 기반 차량 정보 자동 완성 및 등록 시스템.",
+        quantitative: [
+          "지원 제조사: 23개 브랜드",
+          "자동 인식 성공률: 95% 이상"
+        ],
+        roles: [
+          "VIN 파싱 및 유효성 검증 로직 구현",
+          "WMI 코드 매핑 테이블 구축",
+          "차량 이미지 처리 및 저장소 관리"
+        ],
+        techStack: ["Kotlin", "Retrofit", "Glide", "Room", "GridLayout", "SharedPreferences"],
+        coreImplementations: [
+          {
+            title: "VIN 파싱 로직",
+            items: [
+              "17자리 VIN 분석: WMI(제조사), VDS(모델), VIS(일련번호) 분리",
+              "연식 자동 계산(10번째 자리)",
+              "유효성 검증 알고리즘 적용"
+            ]
+          },
+          {
+            title: "제조사 선택 UI",
+            items: [
+              "23개 제조사 로고 Grid 레이아웃",
+              "국가별/인기순 정렬 알고리즘",
+              "다크모드 대응 로고 리소스 관리"
+            ]
+          }
+        ],
+        challenges: [
+          {
+            title: "방대한 차량 데이터베이스와 매핑 정확도",
+            problem: "전 세계 수많은 자동차 제조사의 WMI 코드를 모두 하드코딩할 수 없었고, 신차 출시 때마다 코드가 추가되는 문제가 있었습니다.",
+            solution: "서버로부터 최신 WMI 매핑 데이터를 받아와 로컬 Room DB에 캐싱하는 구조를 설계하여, 앱 업데이트 없이도 신규 제조사나 모델을 지원할 수 있도록 유연성을 확보했습니다."
+          }
+        ],
+        results: [
+          "차량 등록 소요 시간 3분 → 30초로 단축",
+          "VIN 자동 입력으로 사용자 입력 오류(오타) 0% 달성",
+          "깔끔한 차량 선택 UI로 신규 유저 온보딩 경험 개선"
+        ]
       }
     ]
   }

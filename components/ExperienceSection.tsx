@@ -53,14 +53,14 @@ const ExperienceSection: React.FC = () => {
                 {/* View Details Button (Top Right) */}
                 <button
                   onClick={() => setSelectedProject(project)}
-                  className="absolute top-8 right-8 p-3 rounded-full bg-slate-50 text-slate-400 hover:bg-primary-50 hover:text-primary-600 transition-colors hidden md:flex items-center gap-2 group-hover:opacity-100 opacity-60"
+                  className="absolute top-8 right-8 p-3 rounded-full bg-primary-600 text-white shadow-lg hover:bg-primary-700 hover:scale-105 transition-all hidden md:flex items-center gap-2 group-hover:opacity-100"
                 >
                   <span className="text-sm font-bold">자세히 보기</span>
                   <Maximize2 size={20} />
                 </button>
                 <div
                   onClick={() => setSelectedProject(project)}
-                  className="md:hidden absolute top-6 right-6 p-2 text-slate-400"
+                  className="md:hidden absolute top-6 right-6 p-2 text-primary-600"
                 >
                   <Maximize2 size={24} />
                 </div>
@@ -96,14 +96,14 @@ const ExperienceSection: React.FC = () => {
                     )}
                   </div>
 
-                  {/* Simple Stats (Preview) */}
-                  {project.quantitative && project.quantitative.length > 0 && (
+                  {/* Key Achievements (Preview) */}
+                  {project.results && project.results.length > 0 && (
                     <div className="bg-amber-50/50 rounded-xl p-4 border border-amber-100 mb-6">
                       <h4 className="flex items-center gap-2 font-bold text-slate-800 mb-3 text-sm uppercase tracking-wide">
                         <Trophy size={16} className="text-amber-500" /> 핵심 성과
                       </h4>
                       <ul className="space-y-2">
-                        {project.quantitative.slice(0, 2).map((item, i) => (
+                        {project.results.slice(0, 3).map((item, i) => (
                           <li key={i} className="text-slate-700 flex items-start gap-2 text-sm leading-snug">
                             <span className="mt-1.5 w-1 h-1 rounded-full bg-amber-500 shrink-0" />
                             <span>{item}</span>
@@ -114,12 +114,7 @@ const ExperienceSection: React.FC = () => {
                   )}
 
                   {/* Call to Action */}
-                  <button
-                    onClick={() => setSelectedProject(project)}
-                    className="flex items-center gap-2 text-primary-600 font-bold hover:text-primary-700 transition-colors text-sm"
-                  >
-                    프로젝트 상세 분석 보기 <ArrowUpRight size={16} />
-                  </button>
+
                 </div>
 
               </div>
