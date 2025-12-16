@@ -1,10 +1,13 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { EXPERIENCES } from '../constants';
 import FadeIn from './FadeIn';
-import { CheckCircle2, Trophy, Code2, Wrench, AlertTriangle, Layers, Laptop } from 'lucide-react';
+import { CheckCircle2, Trophy, Code2, ArrowUpRight, Maximize2 } from 'lucide-react';
+import ProjectDetailModal from './ProjectDetailModal';
+import { CareerProject } from '../types';
 
 const ExperienceSection: React.FC = () => {
   const exp = EXPERIENCES[0]; // Infocar
+  const [selectedProject, setSelectedProject] = useState<CareerProject | null>(null);
 
   return (
     <section className="min-h-screen py-24 px-6 bg-slate-50">
@@ -39,186 +42,99 @@ const ExperienceSection: React.FC = () => {
         </FadeIn>
 
         {/* Projects List */}
-        <div className="space-y-16">
+        <div className="space-y-12">
           {exp.projects.map((project, idx) => (
             <FadeIn key={idx} delay={idx * 0.05}>
               <div
-                id={project.id} // Added ID for navigation
-                className="bg-white rounded-[2rem] p-8 md:p-10 border border-slate-200 shadow-sm hover:border-primary-200 transition-colors scroll-mt-24" // scroll-margin-top for sticky header
+                id={project.id} // ID for scrolling
+                className="bg-white rounded-[2rem] p-8 md:p-10 border border-slate-200 shadow-sm hover:border-primary-200 transition-all scroll-mt-24 group relative"
               >
 
+                {/* View Details Button (Top Right) */}
+                <button
+                  onClick={() => setSelectedProject(project)}
+                  className="absolute top-8 right-8 p-3 rounded-full bg-slate-50 text-slate-400 hover:bg-primary-50 hover:text-primary-600 transition-colors hidden md:flex items-center gap-2 group-hover:opacity-100 opacity-60"
+                >
+                  <span className="text-sm font-bold">자세히 보기</span>
+                  <Maximize2 size={20} />
+                </button>
+                <div
+                  onClick={() => setSelectedProject(project)}
+                  className="md:hidden absolute top-6 right-6 p-2 text-slate-400"
+                >
+                  <Maximize2 size={24} />
+                </div>
+
                 {/* Project Header */}
-                <div className="mb-8 border-b border-slate-100 pb-8">
-                  <h3 className="text-2xl md:text-3xl font-bold text-slate-900 mb-4 flex items-center gap-3">
+                <div className="mb-6 border-b border-slate-100 pb-6 pr-12">
+                  <h3 className="text-2xl md:text-3xl font-bold text-slate-900 mb-3 flex items-center gap-3">
                     <span className="w-10 h-10 rounded-xl bg-slate-900 text-white flex items-center justify-center text-lg font-bold shrink-0 shadow-md">
                       {idx + 1}
                     </span>
                     {project.title.replace(/^\d+\.\s/, '')}
                   </h3>
 
-                  <div className="space-y-6">
-                    {project.background && (
-                      <div>
-                        <h4 className="font-bold text-slate-900 mb-2 text-sm uppercase tracking-wide opacity-70">Background</h4>
-                        <p className="text-slate-700 text-lg leading-relaxed">{project.background}</p>
-                      </div>
-                    )}
-                    <div>
-                      <h4 className="font-bold text-slate-900 mb-2 text-sm uppercase tracking-wide opacity-70">Project Overview</h4>
-                      <p className="text-slate-700 text-lg leading-relaxed">
-                        {project.overview}
-                      </p>
-                    </div>
+                  <div className="pl-[3.25rem]">
+                    <p className="text-slate-600 text-lg leading-relaxed line-clamp-3">
+                      {project.overview}
+                    </p>
                   </div>
                 </div>
 
-                {/* Tech Stack Chips */}
-                <div className="mb-8">
-                  <div className="flex flex-wrap gap-2">
-                    {project.techStack.map((tech, i) => (
-                      <span key={i} className="px-3 py-1.5 bg-slate-100 text-slate-700 rounded-lg text-sm font-semibold border border-slate-200">
+                <div className="pl-[3.25rem]">
+                  {/* Tech Stack Chips (Simple) */}
+                  <div className="mb-6 flex flex-wrap gap-2">
+                    {project.techStack.slice(0, 5).map((tech, i) => (
+                      <span key={i} className="px-3 py-1.5 bg-slate-100 text-slate-600 rounded-lg text-sm font-semibold border border-slate-200">
                         {tech}
                       </span>
                     ))}
+                    {project.techStack.length > 5 && (
+                      <span className="px-3 py-1.5 bg-slate-50 text-slate-400 rounded-lg text-sm font-medium border border-slate-200">
+                        +{project.techStack.length - 5}
+                      </span>
+                    )}
                   </div>
+
+                  {/* Simple Stats (Preview) */}
+                  {project.quantitative && project.quantitative.length > 0 && (
+                    <div className="bg-amber-50/50 rounded-xl p-4 border border-amber-100 mb-6">
+                      <h4 className="flex items-center gap-2 font-bold text-slate-800 mb-3 text-sm uppercase tracking-wide">
+                        <Trophy size={16} className="text-amber-500" /> 핵심 성과
+                      </h4>
+                      <ul className="space-y-2">
+                        {project.quantitative.slice(0, 2).map((item, i) => (
+                          <li key={i} className="text-slate-700 flex items-start gap-2 text-sm leading-snug">
+                            <span className="mt-1.5 w-1 h-1 rounded-full bg-amber-500 shrink-0" />
+                            <span>{item}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+
+                  {/* Call to Action */}
+                  <button
+                    onClick={() => setSelectedProject(project)}
+                    className="flex items-center gap-2 text-primary-600 font-bold hover:text-primary-700 transition-colors text-sm"
+                  >
+                    프로젝트 상세 분석 보기 <ArrowUpRight size={16} />
+                  </button>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-                  {/* Left Column */}
-                  <div className="space-y-8">
-                    {/* Quantitative Stats */}
-                    {project.quantitative && project.quantitative.length > 0 && (
-                      <div>
-                        <h4 className="flex items-center gap-2 font-bold text-slate-900 mb-4 text-sm uppercase tracking-wide">
-                          <Trophy size={18} className="text-amber-500" /> 정량적 성과
-                        </h4>
-                        <ul className="space-y-3">
-                          {project.quantitative.map((item, i) => (
-                            <li key={i} className="text-slate-700 flex items-start gap-2.5 bg-amber-50/50 p-3 rounded-xl border border-amber-100">
-                              <span className="mt-2 w-1.5 h-1.5 rounded-full bg-amber-500 shrink-0" />
-                              <span className="leading-snug">{item}</span>
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-                    )}
-
-                    {/* Qualitative Results (Added) */}
-                    {project.results && project.results.length > 0 && (
-                      <div>
-                        <h4 className="flex items-center gap-2 font-bold text-slate-900 mb-4 text-sm uppercase tracking-wide">
-                          <Laptop size={18} className="text-indigo-500" /> 주요 성과
-                        </h4>
-                        <ul className="space-y-3">
-                          {project.results.map((item, i) => (
-                            <li key={i} className="text-slate-700 flex items-start gap-2.5 p-2">
-                              <CheckCircle2 size={16} className="text-indigo-500 mt-1 shrink-0" />
-                              <span className="leading-snug">{item}</span>
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-                    )}
-
-                    {/* Roles */}
-                    {project.roles && project.roles.length > 0 && (
-                      <div>
-                        <h4 className="flex items-center gap-2 font-bold text-slate-900 mb-4 text-sm uppercase tracking-wide">
-                          <CheckCircle2 size={18} className="text-blue-500" /> 담당 역할
-                        </h4>
-                        <ul className="space-y-2">
-                          {project.roles.map((item, i) => (
-                            <li key={i} className="text-slate-600 flex items-start gap-2.5">
-                              <span className="mt-2 w-1.5 h-1.5 rounded-full bg-blue-400 shrink-0" />
-                              <span className="leading-snug">{item}</span>
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Right Column */}
-                  <div className="space-y-8">
-                    {/* Core Implementation */}
-                    {project.coreImplementations && project.coreImplementations.length > 0 && (
-                      <div>
-                        <h4 className="flex items-center gap-2 font-bold text-slate-900 mb-4 text-sm uppercase tracking-wide">
-                          <Code2 size={18} className="text-emerald-500" /> 핵심 구현
-                        </h4>
-                        <div className="space-y-4">
-                          {project.coreImplementations.map((impl, i) => (
-                            <div key={i} className="bg-slate-50 rounded-xl p-4 border border-slate-200">
-                              <div className="font-bold text-slate-800 text-sm mb-2">{impl.title}</div>
-                              <ul className="pl-4 list-disc list-outside text-sm text-slate-600 space-y-1.5 marker:text-slate-400">
-                                {impl.items.map((item, j) => (
-                                  <li key={j}>{item}</li>
-                                ))}
-                              </ul>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    )}
-
-                    {/* Technical Challenges (Preferred over Problem Solving) */}
-                    {project.challenges && project.challenges.length > 0 ? (
-                      <div>
-                        <h4 className="flex items-center gap-2 font-bold text-slate-900 mb-4 text-sm uppercase tracking-wide">
-                          <Wrench size={18} className="text-purple-500" /> 기술적 도전 & 해결
-                        </h4>
-                        <div className="space-y-4">
-                          {project.challenges.map((challenge, i) => (
-                            <div key={i} className="bg-slate-50 rounded-xl p-5 border border-slate-200">
-                              <div className="font-bold text-slate-800 mb-3 text-base flex items-center gap-2">
-                                <AlertTriangle size={16} className="text-amber-500" />
-                                {challenge.title}
-                              </div>
-                              <div className="space-y-3 text-sm">
-                                <div className="flex gap-3">
-                                  <span className="font-bold text-slate-500 w-12 shrink-0 text-right">문제</span>
-                                  <span className="text-slate-700 leading-relaxed border-l-2 border-slate-200 pl-3">{challenge.problem}</span>
-                                </div>
-                                <div className="flex gap-3">
-                                  <span className="font-bold text-blue-600 w-12 shrink-0 text-right">해결</span>
-                                  <span className="text-slate-800 leading-relaxed border-l-2 border-blue-200 pl-3">{challenge.solution}</span>
-                                </div>
-                              </div>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    ) : (
-                      // Fallback to legacy Problem Solving
-                      project.problemSolving && (
-                        <div>
-                          <h4 className="flex items-center gap-2 font-bold text-slate-900 mb-4 text-sm uppercase tracking-wide">
-                            <Wrench size={18} className="text-purple-500" /> 문제 해결 사례
-                          </h4>
-                          <div className="bg-slate-50 rounded-xl p-5 border border-slate-200 space-y-3 text-sm">
-                            <div className="flex gap-3">
-                              <span className="font-bold text-slate-500 w-12 shrink-0 text-right">문제</span>
-                              <span className="text-slate-700 leading-relaxed border-l-2 border-slate-200 pl-3">{project.problemSolving.problem}</span>
-                            </div>
-                            <div className="flex gap-3">
-                              <span className="font-bold text-blue-600 w-12 shrink-0 text-right">해결</span>
-                              <span className="text-slate-800 leading-relaxed border-l-2 border-blue-200 pl-3">{project.problemSolving.solution}</span>
-                            </div>
-                            <div className="flex gap-3 pt-2 mt-1 border-t border-slate-100">
-                              <span className="font-bold text-emerald-600 w-12 shrink-0 text-right">결과</span>
-                              <span className="text-slate-800 font-medium leading-relaxed border-l-2 border-emerald-200 pl-3">{project.problemSolving.result}</span>
-                            </div>
-                          </div>
-                        </div>
-                      )
-                    )}
-                  </div>
-                </div>
               </div>
             </FadeIn>
           ))}
         </div>
       </div>
+
+      {/* Detail Modal */}
+      <ProjectDetailModal
+        isOpen={!!selectedProject}
+        onClose={() => setSelectedProject(null)}
+        project={selectedProject}
+      />
+
     </section>
   );
 };
