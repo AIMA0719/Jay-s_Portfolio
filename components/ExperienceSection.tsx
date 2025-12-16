@@ -15,25 +15,26 @@ const ExperienceSection: React.FC = () => {
         {/* Header Section */}
         <FadeIn className="mb-12">
           <h2 className="text-4xl font-extrabold text-slate-900 mb-8 border-l-8 border-primary-600 pl-6 py-1">
-            안드로이드 개발자 포트폴리오 - 경력 상세
+            경력 상세
           </h2>
 
           <div className="bg-white rounded-2xl p-8 border border-slate-200 shadow-sm">
-            <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-slate-100 pb-6 mb-6">
-              <div>
-                <h3 className="text-3xl font-extrabold text-slate-900 mb-2">{exp.company}</h3>
-                <p className="text-2xl text-primary-600 font-bold">{exp.role}</p>
-              </div>
-              <div className="text-slate-500 font-medium text-lg bg-slate-50 px-4 py-2 rounded-lg border border-slate-200">
+            {/* Company Info Header (Single Line) */}
+            <div className="flex flex-col sm:flex-row items-baseline gap-3 border-b border-slate-100 pb-6 mb-6">
+              <h3 className="text-2xl font-extrabold text-slate-900">{exp.company}</h3>
+              <span className="hidden sm:inline text-slate-300">|</span>
+              <p className="text-xl text-slate-700 font-medium">{exp.role}</p>
+              <span className="hidden sm:inline text-slate-300">|</span>
+              <div className="text-primary-600 font-bold text-lg">
                 {exp.period}
               </div>
             </div>
 
-            {/* Overview Stats */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {/* Overview Stats (List Style) */}
+            <div className="space-y-3">
               {exp.overviewStats.map((item, idx) => (
-                <div key={idx} className="flex items-start gap-3 text-slate-700 font-medium">
-                  <div className="mt-2 w-1.5 h-1.5 rounded-full bg-primary-500 shrink-0" />
+                <div key={idx} className="flex items-start gap-3 text-slate-700 font-medium text-lg">
+                  <div className="mt-2.5 w-1.5 h-1.5 rounded-full bg-primary-500 shrink-0" />
                   <span className="leading-relaxed">{item}</span>
                 </div>
               ))}

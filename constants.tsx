@@ -1013,10 +1013,12 @@ export const EXPERIENCES: Experience[] = [
     role: "Android 담당자 / 전임 연구원",
     period: "2022.10 ~ 현재",
     overviewStats: [
-      "총 커밋 수: 3,871회",
-      "프로젝트 총 코드량: 255,014 라인 (Java 1,028개 + Kotlin 49개 파일)",
-      "앱 버전: Infocar v2.28.1 (809회 릴리즈), Infocar Biz v1.1.3 (57회 릴리즈)",
-      "다국어 지원: 15개 언어 (한국어, 영어, 일본어, 중국어, 아랍어, 독일어, 프랑스어, 러시아어 등)"
+      "OBD-II 기반 차량 진단 앱 개발 및 유지보수",
+      "Kotlin/MVVM/Coroutines 기반 앱 아키텍처 설계",
+      "GitHub Actions CI/CD 파이프라인 구축으로 배포 자동화",
+      "Android Auto 연동 및 BLE 통신 프로토콜 구현",
+      "15개국 다국어 지원, 글로벌 서비스 운영",
+      "2개 제품군(일반/기업용) 단일 코드베이스 관리"
     ],
     projects: BENTO_ITEMS
       .filter(item => item.id !== 'dual-app')
