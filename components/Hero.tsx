@@ -9,7 +9,7 @@ const Hero: React.FC = () => {
       {/* Background Decor */}
       <div className="absolute top-[-20%] right-[-10%] w-[500px] h-[500px] bg-blue-200/30 rounded-full blur-[100px] animate-pulse" />
       <div className="absolute bottom-[-10%] left-[-10%] w-[400px] h-[400px] bg-indigo-200/30 rounded-full blur-[100px] animate-pulse delay-700" />
-      
+
       <div className="max-w-5xl w-full text-center z-10 px-6">
         <FadeIn delay={0.2}>
           <h1 className="text-6xl md:text-8xl font-extrabold text-slate-900 leading-tight mb-8 whitespace-pre-line tracking-tight">
@@ -19,11 +19,8 @@ const Hero: React.FC = () => {
 
         <FadeIn delay={0.4}>
           <div className="space-y-4">
-            <p className="text-2xl md:text-3xl text-slate-700 max-w-3xl mx-auto font-medium">
-              {PERSONAL_INFO.shortIntro}
-            </p>
             <p className="text-lg md:text-xl text-slate-500 max-w-2xl mx-auto leading-relaxed">
-              복잡한 문제를 <span className="text-primary-600 font-bold">심플한 코드</span>로,<br className="md:hidden"/> 딱딱한 기술을 <span className="text-primary-600 font-bold">유연한 경험</span>으로 바꿉니다.
+              복잡한 문제를 <span className="text-primary-600 font-bold">심플한 코드</span>로,<br className="md:hidden" /> 딱딱한 기술을 <span className="text-primary-600 font-bold">유연한 경험</span>으로 바꿉니다.
             </p>
           </div>
         </FadeIn>
