@@ -86,11 +86,19 @@ const PhysicsBento: React.FC = () => {
     const handleResize = () => {
       const { width, height } = container.getBoundingClientRect();
 
-      // 스케일 계산 로직 (모바일/태블릿/PC 대응)
-      let newScale = 1;
-      if (width < 768) newScale = 0.55;      // 모바일 (<768px)
-      else if (width < 1024) newScale = 0.75; // 태블릿 (<1024px)
-      // 그 외 PC (>=1024px) -> 1.0
+      // 스케일 계산 로직 (화면 너비 비례)
+      // 기준 너비: 1600px (이때 scale = 1.0)
+      const baseWidth = 1600;
+      let ratio = width / baseWidth;
+
+      // 모바일 등에서 좀 더 여유있게 보이도록 비율 조정
+      // ratio가 작을수록 더 작게 보이게 하여 꽉 차지 않게 함
+      if (width < 768) {
+        ratio = ratio * 0.8; // 모바일에서는 추가 축소
+      }
+
+      // 최소 0.4, 최대 1.0 제한
+      const newScale = Math.min(Math.max(ratio, 0.4), 1.0);
 
       setCurrentScale(newScale);
 
