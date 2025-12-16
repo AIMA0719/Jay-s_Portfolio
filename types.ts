@@ -17,6 +17,8 @@ export interface ProblemSolving {
 export interface CareerProject {
   id?: string; // For linking from BentoGrid
   title: string;
+  subtitle?: string; // Restored for legacy modal
+  icon?: any; // Restored for legacy modal (LucideIcon)
   overview: string;
   background?: string; // From Bento details
   quantitative?: string[];
