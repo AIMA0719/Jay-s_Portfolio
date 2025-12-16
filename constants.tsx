@@ -970,39 +970,39 @@ export const BENTO_ITEMS: BentoItemProps[] = [
 export const SKILLS: Skill[] = [
   {
     category: "언어",
-    items: ["Kotlin (주력)", "Java (레거시)"]
+    items: ["Kotlin (주력)", "Java"]
   },
   {
     category: "아키텍처",
-    items: ["MVVM", "MVI (Orbit)", "Clean Architecture", "Repository Pattern"]
+    items: ["MVVM (ViewModel + LiveData)", "Repository Pattern"]
   },
   {
-    category: "Jetpack",
-    items: ["Compose", "ViewModel", "LiveData", "Room", "WorkManager", "Navigation"]
-  },
-  {
-    category: "비동기",
-    items: ["Kotlin Coroutines", "Flow"]
+    category: "비동기 처리",
+    items: ["Kotlin Coroutines", "RxJava3 (BLE 통신)"]
   },
   {
     category: "네트워크",
-    items: ["Retrofit", "OkHttp", "Gson"]
+    items: ["Retrofit2 + OkHttp"]
   },
   {
-    category: "DI",
-    items: ["Hilt (예정)", "Manual DI"]
+    category: "데이터베이스",
+    items: ["SQLite", "Room", "DataStore (SharedPreferences 대체)"]
   },
   {
-    category: "테스트",
-    items: ["JUnit", "Mockito"]
+    category: "UI",
+    items: ["Jetpack Compose (XML → Compose 마이그레이션 경험)", "ViewBinding / DataBinding"]
+  },
+  {
+    category: "Firebase",
+    items: ["Crashlytics", "Analytics", "Remote Config"]
   },
   {
     category: "CI/CD",
-    items: ["GitHub Actions", "Slack 연동"]
+    items: ["GitHub Actions (Android CI 구축, Slack 연동)"]
   },
   {
     category: "기타",
-    items: ["Bluetooth/BLE", "OBD-II Protocol", "Google Maps", "Firebase (FCM, Crashlytics)"]
+    items: ["BLE 통신 (RxAndroidBLE)", "다국어 지원"]
   }
 ];
 
