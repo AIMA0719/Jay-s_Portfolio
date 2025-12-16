@@ -25,7 +25,7 @@ const ExperienceSection: React.FC = () => {
                 {exp.period}
               </div>
             </div>
-            
+
             {/* Overview Stats */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {exp.overviewStats.map((item, idx) => (
@@ -42,8 +42,11 @@ const ExperienceSection: React.FC = () => {
         <div className="space-y-16">
           {exp.projects.map((project, idx) => (
             <FadeIn key={idx} delay={idx * 0.05}>
-              <div className="bg-white rounded-[2rem] p-8 md:p-10 border border-slate-200 shadow-sm hover:border-primary-200 transition-colors">
-                
+              <div
+                id={project.id} // Added ID for navigation
+                className="bg-white rounded-[2rem] p-8 md:p-10 border border-slate-200 shadow-sm hover:border-primary-200 transition-colors scroll-mt-24" // scroll-margin-top for sticky header
+              >
+
                 {/* Project Header */}
                 <div className="mb-8 border-b border-slate-100 pb-8">
                   <h3 className="text-2xl md:text-3xl font-bold text-slate-900 mb-4 flex items-center gap-3">
@@ -52,8 +55,14 @@ const ExperienceSection: React.FC = () => {
                     </span>
                     {project.title.replace(/^\d+\.\s/, '')}
                   </h3>
-                  
-                  <div className="space-y-4">
+
+                  <div className="space-y-6">
+                    {project.background && (
+                      <div>
+                        <h4 className="font-bold text-slate-900 mb-2 text-sm uppercase tracking-wide opacity-70">Background</h4>
+                        <p className="text-slate-700 text-lg leading-relaxed">{project.background}</p>
+                      </div>
+                    )}
                     <div>
                       <h4 className="font-bold text-slate-900 mb-2 text-sm uppercase tracking-wide opacity-70">Project Overview</h4>
                       <p className="text-slate-700 text-lg leading-relaxed">
@@ -87,6 +96,23 @@ const ExperienceSection: React.FC = () => {
                           {project.quantitative.map((item, i) => (
                             <li key={i} className="text-slate-700 flex items-start gap-2.5 bg-amber-50/50 p-3 rounded-xl border border-amber-100">
                               <span className="mt-2 w-1.5 h-1.5 rounded-full bg-amber-500 shrink-0" />
+                              <span className="leading-snug">{item}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+
+                    {/* Qualitative Results (Added) */}
+                    {project.results && project.results.length > 0 && (
+                      <div>
+                        <h4 className="flex items-center gap-2 font-bold text-slate-900 mb-4 text-sm uppercase tracking-wide">
+                          <Laptop size={18} className="text-indigo-500" /> 주요 성과
+                        </h4>
+                        <ul className="space-y-3">
+                          {project.results.map((item, i) => (
+                            <li key={i} className="text-slate-700 flex items-start gap-2.5 p-2">
+                              <CheckCircle2 size={16} className="text-indigo-500 mt-1 shrink-0" />
                               <span className="leading-snug">{item}</span>
                             </li>
                           ))}
@@ -135,27 +161,56 @@ const ExperienceSection: React.FC = () => {
                       </div>
                     )}
 
-                    {/* Problem Solving */}
-                    {project.problemSolving && (
+                    {/* Technical Challenges (Preferred over Problem Solving) */}
+                    {project.challenges && project.challenges.length > 0 ? (
                       <div>
-                         <h4 className="flex items-center gap-2 font-bold text-slate-900 mb-4 text-sm uppercase tracking-wide">
-                          <Wrench size={18} className="text-purple-500" /> 문제 해결 사례
+                        <h4 className="flex items-center gap-2 font-bold text-slate-900 mb-4 text-sm uppercase tracking-wide">
+                          <Wrench size={18} className="text-purple-500" /> 기술적 도전 & 해결
                         </h4>
-                        <div className="bg-slate-50 rounded-xl p-5 border border-slate-200 space-y-3 text-sm">
-                            <div className="flex gap-3">
-                                <span className="font-bold text-slate-500 w-12 shrink-0 text-right">문제</span>
-                                <span className="text-slate-700 leading-relaxed border-l-2 border-slate-200 pl-3">{project.problemSolving.problem}</span>
+                        <div className="space-y-4">
+                          {project.challenges.map((challenge, i) => (
+                            <div key={i} className="bg-slate-50 rounded-xl p-5 border border-slate-200">
+                              <div className="font-bold text-slate-800 mb-3 text-base flex items-center gap-2">
+                                <AlertTriangle size={16} className="text-amber-500" />
+                                {challenge.title}
+                              </div>
+                              <div className="space-y-3 text-sm">
+                                <div className="flex gap-3">
+                                  <span className="font-bold text-slate-500 w-12 shrink-0 text-right">문제</span>
+                                  <span className="text-slate-700 leading-relaxed border-l-2 border-slate-200 pl-3">{challenge.problem}</span>
+                                </div>
+                                <div className="flex gap-3">
+                                  <span className="font-bold text-blue-600 w-12 shrink-0 text-right">해결</span>
+                                  <span className="text-slate-800 leading-relaxed border-l-2 border-blue-200 pl-3">{challenge.solution}</span>
+                                </div>
+                              </div>
                             </div>
-                            <div className="flex gap-3">
-                                <span className="font-bold text-blue-600 w-12 shrink-0 text-right">해결</span>
-                                <span className="text-slate-800 leading-relaxed border-l-2 border-blue-200 pl-3">{project.problemSolving.solution}</span>
-                            </div>
-                            <div className="flex gap-3 pt-2 mt-1 border-t border-slate-100">
-                                <span className="font-bold text-emerald-600 w-12 shrink-0 text-right">결과</span>
-                                <span className="text-slate-800 font-medium leading-relaxed border-l-2 border-emerald-200 pl-3">{project.problemSolving.result}</span>
-                            </div>
+                          ))}
                         </div>
                       </div>
+                    ) : (
+                      // Fallback to legacy Problem Solving
+                      project.problemSolving && (
+                        <div>
+                          <h4 className="flex items-center gap-2 font-bold text-slate-900 mb-4 text-sm uppercase tracking-wide">
+                            <Wrench size={18} className="text-purple-500" /> 문제 해결 사례
+                          </h4>
+                          <div className="bg-slate-50 rounded-xl p-5 border border-slate-200 space-y-3 text-sm">
+                            <div className="flex gap-3">
+                              <span className="font-bold text-slate-500 w-12 shrink-0 text-right">문제</span>
+                              <span className="text-slate-700 leading-relaxed border-l-2 border-slate-200 pl-3">{project.problemSolving.problem}</span>
+                            </div>
+                            <div className="flex gap-3">
+                              <span className="font-bold text-blue-600 w-12 shrink-0 text-right">해결</span>
+                              <span className="text-slate-800 leading-relaxed border-l-2 border-blue-200 pl-3">{project.problemSolving.solution}</span>
+                            </div>
+                            <div className="flex gap-3 pt-2 mt-1 border-t border-slate-100">
+                              <span className="font-bold text-emerald-600 w-12 shrink-0 text-right">결과</span>
+                              <span className="text-slate-800 font-medium leading-relaxed border-l-2 border-emerald-200 pl-3">{project.problemSolving.result}</span>
+                            </div>
+                          </div>
+                        </div>
+                      )
                     )}
                   </div>
                 </div>

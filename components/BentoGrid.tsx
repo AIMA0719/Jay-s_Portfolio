@@ -1,7 +1,6 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { BENTO_ITEMS } from '../constants';
-import { motion, AnimatePresence } from 'framer-motion';
-import { X, Calendar, CheckCircle2, Cpu, AlertTriangle, Trophy, ArrowUpRight } from 'lucide-react';
+import { ArrowUpRight } from 'lucide-react';
 import { BentoItemProps } from '../types';
 
 // 밝고 트렌디한 색상 팔레트
@@ -31,13 +30,29 @@ interface BubbleBody {
 }
 
 const PhysicsBento: React.FC = () => {
-  const [selectedId, setSelectedId] = useState<string | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const bubblesRef = useRef<BubbleBody[]>([]);
   const requestRef = useRef<number>();
   const elementsRef = useRef<(HTMLDivElement | null)[]>([]);
 
-  const selectedItem = BENTO_ITEMS.find(item => item.id === selectedId);
+  const handleProjectClick = (id: string) => {
+    // 1. 해당 ID를 가진 요소 찾기
+    const element = document.getElementById(id);
+    if (!element) return;
+
+    // 2. 스티키 헤더 등 상단 여백 보정 (예: 100px)
+    const offset = 100;
+    const bodyRect = document.body.getBoundingClientRect().top;
+    const elementRect = element.getBoundingClientRect().top;
+    const elementPosition = elementRect - bodyRect;
+    const offsetPosition = elementPosition - offset;
+
+    // 3. 부드러운 스크롤 이동
+    window.scrollTo({
+      top: offsetPosition,
+      behavior: 'smooth'
+    });
+  };
 
   // 물리 엔진 초기화 및 루프
   useEffect(() => {
@@ -51,7 +66,7 @@ const PhysicsBento: React.FC = () => {
       bubblesRef.current = BENTO_ITEMS.map((item, index) => {
         // cols가 2면 더 큰 반지름 (중요도 표시)
         const radius = item.cols === 2 ? 140 : 100; // 픽셀 단위 반지름
-        
+
         return {
           id: item.id,
           // 화면 중앙 부근에서 랜덤 시작
@@ -114,7 +129,7 @@ const PhysicsBento: React.FC = () => {
             const overlap = minDistance - distance;
             const nx = dx / distance;
             const ny = dy / distance;
-            
+
             // 무게에 따라 밀려나는 정도 조정
             const totalMass = b1.mass + b2.mass;
             const m1Ratio = b2.mass / totalMass;
@@ -128,7 +143,7 @@ const PhysicsBento: React.FC = () => {
             // 속도 벡터 반사 (Elastic Collision Physics)
             // v1' = v1 - 2*m2/(m1+m2) * <v1-v2, n> * n
             const k = 2 * (b1.vx * nx + b1.vy * ny - b2.vx * nx - b2.vy * ny) / (b1.mass + b2.mass);
-            
+
             b1.vx -= k * b2.mass * nx;
             b1.vy -= k * b2.mass * ny;
             b2.vx += k * b1.mass * nx;
@@ -161,16 +176,15 @@ const PhysicsBento: React.FC = () => {
     const handleResize = () => {
       if (!containerRef.current) return;
       const { width, height } = containerRef.current.getBoundingClientRect();
-      
+
       bubblesRef.current.forEach(b => {
-         b.x = Math.min(Math.max(b.x, b.radius), width - b.radius);
-         b.y = Math.min(Math.max(b.y, b.radius), height - b.radius);
+        b.x = Math.min(Math.max(b.x, b.radius), width - b.radius);
+        b.y = Math.min(Math.max(b.y, b.radius), height - b.radius);
       });
     };
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
-
 
   return (
     <section className="min-h-screen relative overflow-hidden bg-slate-50 flex flex-col">
@@ -180,29 +194,29 @@ const PhysicsBento: React.FC = () => {
           Project Universe
         </h2>
         <p className="text-slate-600 text-xl max-w-2xl mx-auto">
-          톡톡 튀는 아이디어들이 모여 만들어낸 결과물입니다.<br/>
+          톡톡 튀는 아이디어들이 모여 만들어낸 결과물입니다.<br />
           원을 클릭하여 상세 내용을 확인하세요.
         </p>
       </div>
 
       {/* Physics Container */}
-      <div 
-        ref={containerRef} 
+      <div
+        ref={containerRef}
         className="flex-1 w-full h-[80vh] relative overflow-hidden"
       >
         {BENTO_ITEMS.map((item, index) => {
           const colorTheme = BRIGHT_COLORS[index % BRIGHT_COLORS.length];
           const isLarge = item.cols === 2;
           // 지름 = 반지름 * 2
-          const sizePx = isLarge ? 280 : 200; 
+          const sizePx = isLarge ? 280 : 200;
 
           return (
             <div
               key={item.id}
               ref={(el) => (elementsRef.current[index] = el)}
-              onClick={() => setSelectedId(item.id)}
-              style={{ 
-                width: sizePx, 
+              onClick={() => handleProjectClick(item.id)}
+              style={{
+                width: sizePx,
                 height: sizePx,
                 position: 'absolute',
                 top: 0,
@@ -219,173 +233,31 @@ const PhysicsBento: React.FC = () => {
               <div className={`p-3 rounded-full mb-3 ${colorTheme.iconBg} ${colorTheme.iconColor} shadow-sm`}>
                 <item.icon size={isLarge ? 32 : 24} strokeWidth={2.5} />
               </div>
-              
+
               <h3 className={`font-bold leading-tight mb-1 px-2 ${isLarge ? 'text-2xl' : 'text-lg'}`}>
                 {item.title}
               </h3>
-              
+
               <p className="text-xs font-semibold opacity-70 mb-3 px-2 line-clamp-1">
                 {item.subtitle}
               </p>
 
               <div className="flex flex-wrap justify-center gap-1">
                 {item.details.techStack.slice(0, 2).map((tech, i) => (
-                   <span key={i} className="text-[10px] bg-white/60 px-2 py-0.5 rounded-full font-bold uppercase">
-                     {tech}
-                   </span>
+                  <span key={i} className="text-[10px] bg-white/60 px-2 py-0.5 rounded-full font-bold uppercase">
+                    {tech}
+                  </span>
                 ))}
               </div>
 
               {/* Hover Hint */}
               <div className="absolute bottom-6 opacity-0 hover:opacity-100 transition-opacity">
-                 <ArrowUpRight className={colorTheme.iconColor} />
+                <ArrowUpRight className={colorTheme.iconColor} />
               </div>
             </div>
           );
         })}
       </div>
-
-      {/* MODAL */}
-      <AnimatePresence>
-        {selectedId && selectedItem && (
-          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 md:p-6 overflow-hidden">
-            <motion.div 
-              initial={{ opacity: 0 }} 
-              animate={{ opacity: 1 }} 
-              exit={{ opacity: 0 }}
-              onClick={() => setSelectedId(null)}
-              className="absolute inset-0 bg-slate-900/40"
-            />
-            <motion.div 
-              initial={{ scale: 0.9, opacity: 0, y: 20 }}
-              animate={{ scale: 1, opacity: 1, y: 0 }}
-              exit={{ scale: 0.9, opacity: 0, y: 20 }}
-              className="bg-white w-full max-w-6xl h-[90vh] md:h-[85vh] rounded-[2rem] shadow-2xl z-10 relative flex flex-col md:flex-row overflow-hidden border border-white/20"
-            >
-              <button 
-                onClick={(e) => { e.stopPropagation(); setSelectedId(null); }}
-                className="absolute top-6 right-6 z-50 p-2 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-700 transition-colors shadow-sm"
-              >
-                <X size={24} />
-              </button>
-
-              {/* Sidebar */}
-              <div className="bg-slate-50 p-8 md:p-10 md:w-[35%] border-r border-slate-200 flex flex-col shrink-0 overflow-y-auto">
-                <div className="mb-8">
-                    <div className="w-16 h-16 bg-white border border-slate-200 text-primary-600 rounded-2xl flex items-center justify-center mb-6 shadow-sm">
-                        <selectedItem.icon size={32} strokeWidth={1.5} />
-                    </div>
-                    <h3 className="text-3xl font-extrabold text-slate-900 leading-tight mb-2">{selectedItem.title}</h3>
-                    <p className="text-lg text-primary-600 font-semibold">{selectedItem.subtitle}</p>
-                </div>
-                
-                <div className="flex items-center gap-2 text-slate-500 text-sm font-medium mb-10 bg-white px-4 py-2 rounded-lg border border-slate-200 self-start shadow-sm">
-                    <Calendar size={16} />
-                    <span>{selectedItem.details.period}</span>
-                </div>
-
-                <div>
-                    <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-4 flex items-center gap-2">
-                        <Cpu size={14} /> Tech Stack
-                    </h4>
-                    <div className="flex flex-wrap gap-2">
-                        {selectedItem.details.techStack.map((tech, idx) => (
-                            <span 
-                              key={idx} 
-                              className="px-3 py-1.5 bg-white border border-slate-200 rounded-lg text-sm font-medium text-slate-600 shadow-sm hover:border-primary-300 hover:text-primary-700 transition-colors cursor-default"
-                            >
-                                {tech}
-                            </span>
-                        ))}
-                    </div>
-                </div>
-              </div>
-
-              {/* Content */}
-              <div className="p-8 md:p-12 md:w-[65%] bg-white overflow-y-auto custom-scrollbar">
-                <div className="max-w-3xl mx-auto">
-                    <div className="mb-12">
-                        <h4 className="text-xl font-bold text-slate-900 mb-4">프로젝트 배경</h4>
-                        <p className="text-slate-600 leading-8 text-lg">
-                            {selectedItem.details.background}
-                        </p>
-                    </div>
-
-                    <div className="mb-12">
-                        <h4 className="text-xl font-bold text-slate-900 mb-6 flex items-center gap-2">
-                            <span className="p-1.5 bg-blue-100 text-blue-600 rounded-lg"><CheckCircle2 size={20} /></span>
-                            주요 담당 업무
-                        </h4>
-                        <div className="grid gap-8">
-                            {selectedItem.details.tasks.map((taskGroup, idx) => (
-                                <div key={idx} className="bg-slate-50 rounded-2xl p-6 border border-slate-100">
-                                    <h5 className="font-bold text-slate-900 mb-4 text-lg border-b border-slate-200 pb-2">{taskGroup.title}</h5>
-                                    <ul className="space-y-3">
-                                        {taskGroup.items.map((task, taskIdx) => (
-                                            <li key={taskIdx} className="flex items-start gap-3 text-slate-700">
-                                                <div className="w-1.5 h-1.5 rounded-full bg-blue-500 mt-2.5 shrink-0" />
-                                                <span className="leading-relaxed">{task}</span>
-                                            </li>
-                                        ))}
-                                    </ul>
-                                </div>
-                            ))}
-                        </div>
-                    </div>
-
-                    {selectedItem.details.challenges && selectedItem.details.challenges.length > 0 && (
-                        <div className="mb-12">
-                            <h4 className="text-xl font-bold text-slate-900 mb-6 flex items-center gap-2">
-                                <span className="p-1.5 bg-amber-100 text-amber-600 rounded-lg"><AlertTriangle size={20} /></span>
-                                기술적 도전 (Challenge & Solution)
-                            </h4>
-                            <div className="space-y-4">
-                                {selectedItem.details.challenges.map((challenge, idx) => (
-                                    <div key={idx} className="bg-white rounded-xl border border-amber-100 shadow-sm overflow-hidden">
-                                        <div className="bg-amber-50/50 px-6 py-3 border-b border-amber-100">
-                                            <h5 className="font-bold text-slate-900">{challenge.title}</h5>
-                                        </div>
-                                        <div className="p-6 space-y-4">
-                                            <div className="flex gap-4">
-                                                <span className="font-bold text-xs text-amber-600 uppercase tracking-wide shrink-0 mt-1 w-16">Problem</span>
-                                                <span className="text-slate-700 leading-relaxed">{challenge.problem}</span>
-                                            </div>
-                                            <div className="flex gap-4">
-                                                <span className="font-bold text-xs text-blue-600 uppercase tracking-wide shrink-0 mt-1 w-16">Solution</span>
-                                                <span className="text-slate-700 leading-relaxed">{challenge.solution}</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                ))}
-                            </div>
-                        </div>
-                    )}
-
-                    {selectedItem.details.results && selectedItem.details.results.length > 0 && (
-                        <div className="mb-8">
-                            <h4 className="text-xl font-bold text-slate-900 mb-6 flex items-center gap-2">
-                                <span className="p-1.5 bg-emerald-100 text-emerald-600 rounded-lg"><Trophy size={20} /></span>
-                                성과 및 결과
-                            </h4>
-                            <ul className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                {selectedItem.details.results.map((result, idx) => (
-                                    <li key={idx} className="flex items-center gap-3 bg-emerald-50/50 p-4 rounded-xl border border-emerald-100/50">
-                                        <div className="w-6 h-6 rounded-full bg-emerald-100 flex items-center justify-center shrink-0 text-emerald-600">
-                                            <CheckCircle2 size={14} />
-                                        </div>
-                                        <span className="font-semibold text-slate-800 text-sm leading-relaxed">{result}</span>
-                                    </li>
-                                ))}
-                            </ul>
-                        </div>
-                    )}
-
-                </div>
-              </div>
-            </motion.div>
-          </div>
-        )}
-      </AnimatePresence>
     </section>
   );
 };

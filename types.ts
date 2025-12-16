@@ -15,14 +15,18 @@ export interface ProblemSolving {
 }
 
 export interface CareerProject {
+  id?: string; // For linking from BentoGrid
   title: string;
   overview: string;
+  background?: string; // From Bento details
   quantitative?: string[];
   roles?: string[];
   techStack: string[];
   coreImplementations?: CoreImplementation[];
-  problemSolving?: ProblemSolving;
-  additionalInfo?: { title: string; items: string[] }[]; // For things like Bluetooth stats
+  problemSolving?: ProblemSolving; // Legacy single problem solving
+  challenges?: Challenge[]; // Multiple challenges from Bento
+  results?: string[]; // Additional qualitative results from Bento
+  additionalInfo?: { title: string; items: string[] }[];
 }
 
 export interface Experience {

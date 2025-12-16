@@ -25,7 +25,9 @@ export const EXPERIENCES: Experience[] = [
     ],
     projects: [
       {
+        id: 'dashboard',
         title: "1. 프리셋 대시보드 시스템",
+        background: "OBD 스캐너로 수집되는 수십 가지 차량 데이터를 사용자가 원하는 항목만 선택하여 실시간으로 모니터링할 수 있는 커스터마이징 대시보드가 필요했습니다. 또한 Infocar와 InfocarBiz 두 앱에서 동일한 기능을 코드 중복 없이 제공해야 했습니다.",
         overview: "차량 OBD-II 데이터를 실시간 시각화하는 대시보드 시스템. Infocar/Infocar Biz 2개 앱의 대시보드 코드를 Interface 패턴으로 통합 아키텍처 설계.",
         quantitative: [
           "코드베이스: 33개 파일, 7,720 라인",
@@ -68,10 +70,46 @@ export const EXPERIENCES: Experience[] = [
           problem: "2개 앱의 대시보드 코드 70% 중복, 유지보수 비용 증가",
           solution: "Interface 패턴으로 공통 로직 추상화, BuildConfig 기반 구현체 주입",
           result: "단일 코드베이스로 2개 앱 관리, 버그 수정 시 한 번만 수정"
-        }
+        },
+        challenges: [
+          {
+            title: "ViewModel 공유 및 Fragment 간 데이터 동기화",
+            problem: "여러 Fragment에서 동일한 실시간 데이터를 구독해야 함",
+            solution: "Activity 스코프의 공유 ViewModel 사용, ViewModelProvider(requireActivity())로 동일 인스턴스 보장"
+          },
+          {
+            title: "메모리 누수 방지",
+            problem: "Fragment 전환 시 Observer가 해제되지 않아 메모리 누수 발생",
+            solution: "observersMap으로 Observer 관리, onPause/onResume에서 detach/reattach 패턴 적용"
+          },
+          {
+            title: "두 앱 코드 통합 (Infocar/InfocarBiz)",
+            problem: "90% 유사한 기능이지만 데이터 키 생성 방식이 다름",
+            solution: "IDashboardDataStore 인터페이스 추상화, BuildConfig 분기로 구현체 선택"
+          },
+          {
+            title: "실시간 데이터 업데이트 최적화",
+            problem: "초당 수십 회 데이터 업데이트로 UI 버벅임",
+            solution: "현재 페이지가 아니면 Observer 콜백에서 early return, DiffUtil 적용"
+          },
+          {
+            title: "타이어 위치 Fallback 로직",
+            problem: "일부 차량에서 특정 타이어 위치 데이터가 없음",
+            solution: "dataIndexOptions에 8개 옵션 추가, 순차적으로 유효한 데이터 탐색"
+          }
+        ],
+        results: [
+          "코드 재사용률 90% 이상 달성 (Infocar/InfocarBiz 통합)",
+          "Fragment 전환 시 메모리 사용량 40% 감소",
+          "사용자 커스터마이징 가능 항목 20개+ 제공",
+          "5개 연료 타입별 최적화된 UI 제공",
+          "태블릿/폰 반응형 레이아웃 완벽 대응"
+        ]
       },
       {
+        id: 'cicd',
         title: "2. CI/CD 파이프라인 구축",
+        background: "수동 빌드 및 테스트로 인한 휴먼 에러와 시간 낭비를 줄이고, 코드 품질을 일관되게 유지하기 위해 자동화된 CI/CD 파이프라인이 필요했습니다.",
         overview: "GitHub Actions 기반 자동 빌드/테스트/배포 파이프라인 구축. Slack 연동으로 실시간 빌드 상태 알림.",
         quantitative: [
           "관련 커밋: 42회",
@@ -111,10 +149,41 @@ export const EXPERIENCES: Experience[] = [
           problem: "수동 빌드로 인한 휴먼 에러, 빌드 상태 공유 어려움",
           solution: "GitHub Actions 자동화 + Slack 실시간 알림",
           result: "빌드 실패 인지 시간 단축, 팀 전체 빌드 상태 가시성 확보"
-        }
+        },
+        challenges: [
+          {
+            title: "jcenter 종료로 인한 라이브러리 마이그레이션",
+            problem: "jcenter 서비스 종료로 기존 라이브러리 다운로드 불가",
+            solution: "대체 저장소 탐색 (JitPack, Maven Central), build.gradle 일괄 수정"
+          },
+          {
+            title: "Gradle 빌드 시간 최적화",
+            problem: "초기 빌드 시간 15분 이상 소요",
+            solution: "Gradle 캐싱, 병렬 빌드 활성화, 불필요한 태스크 스킵으로 7분대로 단축"
+          },
+          {
+            title: "Slack Webhook 보안",
+            problem: "Webhook URL 노출 시 보안 위험",
+            solution: "GitHub Secrets에 저장, 워크플로우에서 환경 변수로 참조"
+          },
+          {
+            title: "다중 플레이버 빌드",
+            problem: "Infocar/InfocarBiz 두 앱을 모두 빌드해야 함",
+            solution: "matrix 전략으로 병렬 빌드, 플레이버별 테스트 분리"
+          }
+        ],
+        results: [
+          "빌드 자동화로 수동 작업 시간 주당 2시간 절약",
+          "코드 푸시 후 7분 내 빌드 결과 확인 가능 (기존 15분 → 7분)",
+          "팀 전체 빌드 상태 실시간 공유로 협업 효율 30% 향상",
+          "빌드 실패 즉시 감지로 문제 해결 시간 단축",
+          "테스트 커버리지 시각화로 코드 품질 관리 체계화"
+        ]
       },
       {
+        id: 'revenue',
         title: "3. 광고 수익화 시스템",
+        background: "광고 수익 극대화를 위해 단일 네트워크의 의존도를 낮추고, 다중 광고 네트워크 미디에이션 시스템 도입이 필요했습니다. Fill rate와 eCPM을 최적화하면서 사용자 경험을 해치지 않는 광고 전략이 필요했습니다.",
         overview: "Google AdMob 기반 광고 시스템 구축. 6개 미디에이션 네트워크 통합으로 광고 수익 최적화.",
         quantitative: [
           "코드베이스: 118개 파일, 30,264 라인",
@@ -162,10 +231,46 @@ export const EXPERIENCES: Experience[] = [
           problem: "단일 AdMob만 사용 시 Fill Rate 저조",
           solution: "6개 미디에이션 네트워크 통합, 워터폴 최적화",
           result: "광고 Fill Rate 향상, 수익 다각화"
-        }
+        },
+        challenges: [
+          {
+            title: "여러 광고 SDK 간 버전 충돌 및 의존성 문제 해결",
+            problem: "ironSource, Pangle, AppLovin 등 SDK 간 의존성 충돌",
+            solution: "Gradle 의존성 트리 분석 후 exclude 규칙 적용, 버전 통일"
+          },
+          {
+            title: "Pangle 배너 광고 Context NPE 등 벤더사 별 특이 이슈 디버깅",
+            problem: "Pangle SDK에서 특정 상황에 Context가 null로 전달되는 버그",
+            solution: "Application Context 사용 및 null 체크 래퍼 클래스 구현"
+          },
+          {
+            title: "광고 정책 변경에 따른 긴급 대응 (네이티브 → 배너 전환) 및 배포",
+            problem: "광고 정책 급변 시 앱 업데이트 없이 대응 필요",
+            solution: "Remote Config로 광고 타입 및 위치 동적 제어, 핫픽스 배포 프로세스 구축"
+          },
+          {
+            title: "메모리 관리 및 광고 뷰 생명주기",
+            problem: "네이티브 광고 뷰 미해제로 인한 메모리 누수",
+            solution: "RecyclerView onViewRecycled에서 광고 뷰 명시적 해제"
+          },
+          {
+            title: "저사양 기기 대응",
+            problem: "광고 로드 시 UI 프리징",
+            solution: "백그라운드 스레드에서 광고 로드, 로드 완료 후 메인 스레드에서 표시"
+          }
+        ],
+        results: [
+          "광고 매출 200% 증가 달성",
+          "Fill rate 98% 이상 유지 (기존 85%)",
+          "광고 로드 지연 시간 30% 단축",
+          "크래시 없는 안정적인 미디에이션 운영",
+          "사용자 피드백 반영으로 광고 관련 리뷰 불만 50% 감소"
+        ]
       },
       {
+        id: 'diagnosis',
         title: "4. 차량 진단 시스템 (OBD-II)",
+        background: "기존 차량 진단 기능의 UX가 복잡하고 사용자 피드백이 많았습니다. 진단 결과 해석이 어렵고, 진단 내역 관리가 불편하다는 의견이 많아 전면 리뉴얼이 필요했습니다. 또한 서버 API 연동을 통해 더 정확한 고장 코드 정보를 제공해야 했습니다.",
         overview: "OBD-II 프로토콜 기반 실시간 차량 데이터 수집 및 진단 시스템. 고장 코드(DTC) 조회 및 해석 기능 제공.",
         quantitative: [
           "OBD 관련 파일: 116개",
@@ -214,7 +319,9 @@ export const EXPERIENCES: Experience[] = [
         ]
       },
       {
+        id: 'manufacturer-data',
         title: "5. 제조사 데이터 연동 시스템",
+        background: "표준 OBD-II 프로토콜로는 제한된 데이터만 조회 가능했습니다. 제조사별 고유 프로토콜을 활용하여 DPF 포집량, 변속기 온도, 배터리 셀 전압 등 상세 데이터를 제공하여 프리미엄 서비스로 차별화가 필요했습니다.",
         overview: "차량 제조사별 전용 데이터 파싱 및 연동 시스템. 표준 OBD-II 외 제조사 고유 프로토콜 지원.",
         quantitative: [
           "관련 커밋: 94회",
@@ -244,7 +351,9 @@ export const EXPERIENCES: Experience[] = [
         ]
       },
       {
+        id: 'overlay',
         title: "6. 오버레이 서비스",
+        background: "네비게이션 앱 사용 중에도 속도, RPM, 연비 등 주행 데이터를 확인하고 싶다는 사용자 요청이 많았습니다. 운전 중 앱 전환 없이 필요한 정보를 확인할 수 있어야 했으며, 안드로이드 버전별 권한 제약 사항을 준수해야 했습니다.",
         overview: "다른 앱 위에 표시되는 플로팅 오버레이 UI. 내비게이션 사용 중에도 차량 정보 실시간 확인 가능.",
         quantitative: [
           "코드베이스: 6개 파일, 2,393 라인",
@@ -275,7 +384,9 @@ export const EXPERIENCES: Experience[] = [
         ]
       },
       {
+        id: 'records',
         title: "7. 주행 기록 시스템",
+        background: "법인 차량 관리자들의 주행 일지 엑셀 내보내기 요청과 개인 사용자들의 주행 목적 관리 기능 요청이 있었습니다. 또한 안전 운전 유도를 위한 이벤트(급가속/급감속/과속) 카운트 기능도 필요했습니다.",
         overview: "주행 데이터 로깅 및 기록 관리 시스템. GPS + OBD 데이터 결합으로 상세 주행 분석 제공.",
         quantitative: [
           "관련 파일: 32개",
@@ -303,10 +414,51 @@ export const EXPERIENCES: Experience[] = [
               "급가속/급감속 감지"
             ]
           }
+        ],
+        problemSolving: {
+          problem: "주행 중 GPS 튀는 현상으로 주행 거리 오차 발생",
+          solution: "칼만 필터 적용 및 OBD 속도 데이터와 교차 검증",
+          result: "주행 거리 오차율 5% → 1% 미만으로 개선"
+        },
+        challenges: [
+          {
+            title: "대용량 데이터 처리",
+            problem: "장거리 주행 시 수천 개의 데이터 포인트로 OOM 발생",
+            solution: "청크 단위 처리, 스트리밍 방식 엑셀 생성"
+          },
+          {
+            title: "엑셀 파일 생성 메모리 효율화",
+            problem: "Apache POI의 메모리 사용량이 큼",
+            solution: "SXSSFWorkbook (스트리밍 API) 사용, 메모리 제한 설정"
+          },
+          {
+            title: "이벤트 카운트 DB 접근 최적화",
+            problem: "매 이벤트마다 DB 접근으로 성능 저하",
+            solution: "메모리에 카운트 캐싱, 주행 종료 시 일괄 저장"
+          },
+          {
+            title: "GPS 거리 정확도",
+            problem: "GPS 오차로 인한 거리 오측정",
+            solution: "칼만 필터 적용, 이상치 제거 알고리즘"
+          },
+          {
+            title: "주행 기록 복구 시 형식 오류",
+            problem: "서버 데이터 형식이 맞지 않아 Format Exception",
+            solution: "데이터 유효성 검증, 예외 처리 강화"
+          }
+        ],
+        results: [
+          "법인 고객 업무 효율 60% 향상 (수기 작성 → 자동 생성)",
+          "주행 목적 입력률 80% 증가 (기본값 설정 효과)",
+          "안전 운전 유도 (이벤트 카운트 시각화로 운전 습관 개선)",
+          "엑셀 내보내기 기능 월 평균 1,000회 이상 사용",
+          "주행 기록 정확도 향상 (GPS 보정)"
         ]
       },
       {
+        id: 'ai-manager',
         title: "8. AI Manager 연동",
+        background: "웹 기반 AI 차량 관리 서비스를 앱 내에서 seamless하게 제공하기 위해 WebView와 Native 간의 양방향 통신이 필요했습니다. 사용자가 웹과 앱을 오가는 느낌 없이 자연스러운 경험을 제공해야 했습니다.",
         overview: "WebView 기반 AI 분석 서비스 연동. Native ↔ Web 양방향 통신 브릿지 구현.",
         quantitative: [
           "관련 파일: 6개",
@@ -330,7 +482,9 @@ export const EXPERIENCES: Experience[] = [
         ]
       },
       {
+        id: 'dispatch',
         title: "9. 배차 관리 시스템 (Biz 전용)",
+        background: "InfocarBiz 법인 고객사에서 차량 배차 관리 기능 요청이 있었습니다. 기존에 수기나 별도 시스템으로 관리하던 배차 업무를 앱 내에서 통합 관리하고, 기안자-관리자 간 워크플로우를 체계화해야 했습니다.",
         overview: "법인용 차량 배차 및 운행 관리 시스템. 관리자-드라이버 간 실시간 배차 처리.",
         quantitative: [
           "관련 커밋: 26회"
@@ -341,7 +495,36 @@ export const EXPERIENCES: Experience[] = [
           "배차 현황 대시보드 개발"
         ],
         techStack: ["FCM (Firebase Cloud Messaging)", "Retrofit (REST API)", "LiveData (실시간 상태 업데이트)"],
-        coreImplementations: []
+        coreImplementations: [],
+        challenges: [
+          {
+            title: "복잡한 상태 관리",
+            problem: "배차 상태(대기/승인/반려)에 따른 UI 분기가 복잡함",
+            solution: "sealed class로 상태 정의, when 표현식으로 분기 처리"
+          },
+          {
+            title: "실시간 업데이트",
+            problem: "관리자 승인 시 기안자 화면이 자동 갱신되지 않음",
+            solution: "Flow + collectAsState로 실시간 데이터 반영, pull-to-refresh 추가"
+          },
+          {
+            title: "날짜/시간 선택 UX",
+            problem: "시작일시가 종료일시보다 늦은 경우 등 예외 처리",
+            solution: "DatePicker/TimePicker 커스텀, 유효성 검증 로직 추가"
+          },
+          {
+            title: "리스트 상태 관리",
+            problem: "필터 변경 시 리스트가 초기화되지 않는 버그",
+            solution: "StateFlow로 필터 상태 관리, collect 시 리스트 재조회"
+          }
+        ],
+        results: [
+          "법인 고객사 배차 업무 시간 50% 단축",
+          "배차 승인 처리 평균 시간 2시간 → 30분으로 단축",
+          "배차 이력 추적 및 통계 기능으로 관리 효율화",
+          "수기 관리 대비 오류율 90% 감소",
+          "모바일에서 실시간 배차 확인으로 업무 편의성 향상"
+        ]
       },
       {
         title: "10. 듀얼 앱 아키텍처 (Product Flavors)",
