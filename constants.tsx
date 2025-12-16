@@ -92,9 +92,9 @@ export const BENTO_ITEMS: BentoItemProps[] = [
         }
       ],
       results: [
-        "코드 중복 제거로 신규 위젯 개발 속도 50% 단축",
-        "단일 모듈로 두 개의 메인 앱(B2C, B2B) 동시 지원 체계 구축",
-        "실시간 데이터 시각화 프레임 드랍 0%에 가까운 최적화 달성"
+        "Infocar/Infocar Biz 두 앱에서 단일 대시보드 모듈 공유",
+        "연료 타입(가솔린/디젤/전기/수소)별 동적 UI 구성",
+        "Jetpack Compose 마이그레이션으로 개발 생산성 향상"
       ]
     }
   },
@@ -111,73 +111,46 @@ export const BENTO_ITEMS: BentoItemProps[] = [
       background: "Infocar Biz(법인용) 서비스 출시 후, 관리자가 PC 웹에서뿐만 아니라 모바일 앱에서도 즉시 차량 배차 승인/반려 처리를 하고 싶다는 요구가 폭주했습니다. 기안자(운전자)와 결재자(관리자)가 실시간으로 소통할 수 있는 모바일 워크플로우 시스템이 필요했습니다.",
       tasks: [
         {
-          title: "배차 등록 페이지",
+          title: "배차 신청/승인 워크플로우",
           items: [
-            "입력 폼 구현: 배차 일시(시작/종료), 주행 목적, 차량 선택, 비고",
-            "유효성 검증: 필수 항목 체크, 날짜 범위 검증",
-            "API 적용 구조: Repository 패턴으로 데이터 레이어 분리"
+            "배차 등록: 배차 일시, 주행 목적, 차량 선택 입력 폼",
+            "승인/반려 처리: 관리자 권한 분기, 반려 사유 필수 입력",
+            "실시간 상태 업데이트: FCM 푸시 연동으로 즉시 반영"
           ]
         },
         {
-          title: "배차 이력 조회",
+          title: "배차 이력 및 필터링",
           items: [
-            "필터링: 기간별, 상태별(전체/대기/승인/반려) 필터",
-            "페이징 처리: 대량 데이터 효율적 로딩",
-            "상태별 UI: 대기(노란색), 승인(초록색), 반려(빨간색) 구분"
-          ]
-        },
-        {
-          title: "차량 선택 페이지",
-          items: [
-            "사용 가능한 차량 목록: 배차 일시에 예약되지 않은 차량만 표시",
-            "검색 기능: 차량 번호, 모델명으로 검색",
-            "차량 정보 표시: 차량 이미지, 번호, 모델, 연료 타입"
-          ]
-        },
-        {
-          title: "반려 처리",
-          items: [
-            "반려 사유 입력: 관리자가 반려 시 사유 필수 입력",
-            "반려 사유 표시: 기안자 화면에서 반려 사유 확인",
-            "재기안 기능: 반려된 건 수정 후 재기안"
+            "기간별/상태별 필터: 전체/대기/승인/반려 구분",
+            "페이징 처리: RecyclerView + Paging 3로 대량 데이터 효율적 로딩",
+            "상태별 UI: 대기(노란색), 승인(초록색), 반려(빨간색) 색상 구분"
           ]
         },
         {
           title: "Flow 기반 비동기 처리",
           items: [
             "Repository 패턴: 데이터 소스 추상화",
-            "Flow 스트림: 실시간 데이터 업데이트",
-            "StateFlow: UI 상태 관리"
-          ]
-        },
-        {
-          title: "API 연동",
-          items: [
-            "배차 등록 API: POST /dispatch",
-            "배차 목록 조회 API: GET /dispatch/list",
-            "배차 상세 조회 API: GET /dispatch/{id}",
-            "배차 승인/반려 API: PUT /dispatch/{id}/approve, /reject",
-            "DTO 설계: Request/Response 모델 클래스"
+            "StateFlow: UI 상태 관리 및 실시간 업데이트"
           ]
         }
       ],
-      techStack: ["Kotlin", "Flow", "StateFlow", "Repository Pattern", "Retrofit", "RecyclerView", "DatePicker", "TimePicker", "Material Design"],
+      techStack: ["Kotlin", "Flow", "StateFlow", "Repository Pattern", "Retrofit", "FCM", "Material Design"],
       challenges: [
         {
-          title: "실시간 배차 상태 동기화 및 동시성 제어",
-          problem: "같은 차랑에 대해 A운전자가 사용 신청을 하는 동시에 B운전자도 신청을 할 경우, 또는 관리자가 승인하기 직전에 취소하는 경우 등 동시성 이슈가 많았습니다.",
-          solution: "FCM(Push Notification)을 트리거로 활용하여 상태 변경 발생 시 앱이 데이터를 강제로 새로고침하도록 구현했습니다. 또한 신청 시점의 타임스탬프와 서버 상태 버전을 비교하는 Optimistic Locking 로직을 클라이언트 단에도 일부 적용하여 사용자에게 '이미 예약된 차량입니다'를 즉시 피드백했습니다."
+          title: "배차 동시성 충돌",
+          problem: "같은 차량에 대해 여러 운전자가 동시에 신청하거나, 관리자 승인 직전 취소되는 경우 등 동시성 이슈가 많았습니다.",
+          solution: "FCM 푸시로 상태 변경 시 즉시 새로고침하고, 타임스탬프 기반 Optimistic Locking으로 충돌 시 즉시 피드백했습니다."
         },
         {
-          title: "복잡한 필터링 및 정렬 로직의 반응형 처리",
-          problem: "날짜별, 차량별, 상태별, 부서별 등 다양한 필터 조건에 따라 수백 건의 배차 리스트를 끊김 없이 보여줘야 했습니다.",
-          solution: "Room DB를 로컬 캐시로 활용하여 네트워크 요청 없이 즉시 리스트를 보여주고, 백그라운드에서 동기화하는 'Offline-First' 전략을 사용했습니다. 필터 로직을 QueryDSL 수준의 동적 쿼리 생성기로 캡슐화하여 유지보수성을 높였습니다."
+          title: "복잡한 필터링 로직",
+          problem: "날짜별, 차량별, 상태별 등 다양한 필터 조건에 따라 수백 건의 리스트를 끊김 없이 보여줘야 했습니다.",
+          solution: "Room DB 로컬 캐시와 백그라운드 동기화로 Offline-First 전략을 구현했습니다."
         }
       ],
       results: [
-        "법인 관리자의 모바일 업무 처리 비율 70% 달성",
-        "배차 충돌 관련 고객 CS 90% 감소",
-        "실시간 알림 도입으로 배차 승인 대기 시간 평균 2시간 → 10분으로 단축"
+        "법인 관리자 모바일 업무 처리 비율 70% 달성",
+        "배차 충돌 관련 CS 90% 감소",
+        "FCM 알림으로 승인 대기 시간 2시간 → 10분 단축"
       ]
     }
   },
@@ -193,83 +166,51 @@ export const BENTO_ITEMS: BentoItemProps[] = [
     dark: true,
     details: {
       period: "2024.05 ~ 2025.05",
-      background: "기존의 Infocar와 Infocar Biz 앱은 서로 다른 대시보드 코드를 유지보수하고 있어, 기능 추가 시 중복 개발과 버그 발생 위험이 컸습니다. 이를 해결하기 위해 하나의 통합된 대시보드 모듈을 설계하여 두 앱에서 공통으로 사용할 수 있는 구조가 필요했습니다. 단순히 UI를 통일하는 것을 넘어, OBD-II 데이터 처리 로직을 효율적으로 관리할 수 있는 아키텍처가 요구되었습니다.",
+      background: "인포카 앱은 글로벌 서비스로 20개국 이상에 출시되어 있어, 국가별로 광고 Fill rate와 eCPM이 천차만별이었습니다. 또한 인포카 스캐너 없이 앱만 설치한 '무료 사용자'의 수익화 전략이 필요했고, 동시에 유료 구독자에게는 광고 없는 깔끔한 경험을 제공해야 했습니다.",
       tasks: [
         {
           title: "미디에이션 SDK 통합",
           items: [
-            "Google AdMob 미디에이션 허브 구축: 메인 광고 네트워크로 AdMob 설정",
-            "ironSource Mediation 연동: 보상형 광고 및 전면 광고 최적화",
-            "Yandex Ads 연동: 러시아/CIS 지역 타겟팅 강화",
-            "Pangle (TikTok) 연동: 아시아 지역 Fill rate 개선",
-            "AppLovin MAX 연동: 글로벌 eCPM 경쟁 입찰",
-            "Mintegral 연동: 추가 광고 소스 확보",
-            "Google UMP (User Messaging Platform): 사용자 동의 관리"
+            "Google AdMob 미디에이션 허브 구축",
+            "ironSource, Yandex, Pangle, AppLovin MAX, Mintegral 등 6개 네트워크 연동",
+            "Google UMP (User Messaging Platform)로 GDPR/CCPA 동의 관리"
           ]
         },
         {
           title: "광고 유형별 최적화",
           items: [
-            "배너 광고: 높이 고정으로 레이아웃 점프 방지, Adaptive Banner 적용",
+            "배너 광고: Adaptive Banner로 레이아웃 시프트 방지",
             "네이티브 광고: 주행 기록 리스트에 5:1 비율로 자연스럽게 삽입",
-            "전면 광고: 진단 시작/완료 시점에 노출, 사전 로드로 지연 최소화",
-            "보상형 광고: 무료 진단/저장/삭제 기능 제공 시 광고 시청 유도",
-            "앱 오프닝 광고: Cold/Warm 시작 시 스플래시 광고 노출"
+            "전면/보상형 광고: Pre-loading으로 지연 최소화",
+            "앱 오프닝 광고: Cold/Warm 시작 시 스플래시 광고"
           ]
         },
         {
-          title: "GDPR/CCPA 규정 대응",
+          title: "정책 및 안정성 관리",
           items: [
-            "사용자 동의 상태 확인: 지역별 개인정보 보호 규정 준수",
-            "동의 상태에 따른 광고 초기화: 동의 전 광고 요청 차단",
-            "Google UMP 다이얼로그: 유럽/캘리포니아 사용자 동의 UI"
-          ]
-        },
-        {
-          title: "안정성 확보",
-          items: [
-            "Timeout 처리: 저사양 기기 및 서버 장애 시 광고 로드 타임아웃 설정",
-            "무한 요청 버그 수정: 광고 로드 실패 시 무한 재시도 방지",
-            "Null 체크 강화: 광고 객체 해제 후 접근 시 NPE 방지",
-            "Context 관리: Pangle 배너 광고 Context NPE 등 벤더사 별 특이 이슈 디버깅"
-          ]
-        },
-        {
-          title: "UI/UX 개선",
-          items: [
-            "RoundedCorners → ViewOutlineProvider: 렌더링 성능 최적화",
-            "광고 로드 중 Placeholder: 광고 영역 예약으로 레이아웃 시프트 방지",
-            "광고 닫기 버튼: 앱 종료 시 네이티브 광고 X 버튼 3초 제한 정책",
-            "광고 로드 실패 시 대체 UI: 빈 공간 대신 자체 프로모션 배너"
-          ]
-        },
-        {
-          title: "정책 관리",
-          items: [
-            "Firebase Remote Config 연동: 광고 정책(노출 빈도, 타겟팅) 원격 제어",
-            "구독자 광고 면제: 프로 구독자는 모든 광고 미노출",
-            "타사 OBD 정책: 인포카 스캐너 외 연결 시 광고 노출 강화",
-            "N일 보지 않기: 프로모션 다이얼로그 노출 빈도 제어"
+            "Firebase Remote Config로 광고 정책 원격 제어",
+            "구독자 광고 면제 로직 구현",
+            "광고 로드 실패 시 무한 재시도 방지 및 NPE 방어"
           ]
         }
       ],
-      techStack: ["Google Mobile Ads SDK 23.6.0", "ironSource Mediation", "Yandex Ads", "Pangle", "AppLovin MAX", "Mintegral", "Google UMP", "Firebase Remote Config", "Kotlin", "Coroutines"],
+      techStack: ["Google Mobile Ads SDK", "ironSource", "Yandex Ads", "Pangle", "AppLovin MAX", "Google UMP", "Firebase Remote Config", "Kotlin"],
       challenges: [
         {
-          title: "복잡한 구독 상태 관리 및 결제 검증",
-          problem: "구독 갱신, 취소, 일시 정지, 유예 기간 등 다양한 결제 상태를 클라이언트에서 정확하게 반영해야 했습니다. 또한, 네트워크 불안정으로 인한 결제 누락(Pending) 처리가 중요했습니다.",
-          solution: "Google Play Billing Library 5.0+ 최신 스펙을 적용하고, `purchasesUpdatedListener`를 통해 앱 실행 시점 및 실시간으로 구매 상태를 동기화했습니다. 백엔드 영수증 검증 서버와 연동하여 클라이언트 조작을 방지하고, 로컬 캐싱을 통해 오프라인 상태에서도 프리미엄 기능을 유지하도록 구현했습니다."
+          title: "글로벌 Fill rate 최적화",
+          problem: "국가별로 광고 네트워크의 Fill rate가 달라 빈 광고 영역이 자주 발생했습니다.",
+          solution: "미디에이션 워터폴을 국가별로 다르게 설정하고, Fill rate가 낮은 지역은 자체 프로모션 배너로 대체했습니다."
         },
         {
-          title: "광고 로드 속도 및 사용자 경험 최적화",
-          problem: "전면 광고나 네이티브 광고가 늦게 로드되어 레이아웃이 덜컥거리거나(CLS), 사용자가 실수로 클릭하게 되는(Invalid Traffic) 문제가 있었습니다.",
-          solution: "Native Advanced Ads를 도입하여 광고 로드 전 미리 레이아웃 공간을 확보(Skeleton UI)하여 CLS를 방지했습니다. 또한, 광고 객체를 미리 로드(Pre-loading)하여 화면 전환 시 즉시 표시되도록 하고, Impression 이벤트를 정확히 추적하여 광고 성과 분석의 정확도를 높였습니다."
+          title: "레이아웃 시프트(CLS) 방지",
+          problem: "광고가 늦게 로드되어 화면이 덜컥거리는 UX 문제가 있었습니다.",
+          solution: "Skeleton UI로 광고 영역을 미리 확보하고, Pre-loading으로 즉시 표시되도록 개선했습니다."
         }
       ],
       results: [
-        "인앱 결제 처리 누락 0건 달성 (안정성 확보)",
-        "광고 노출 로직 최적화로 eCPM 15% 상승",
-        "네이티브 광고 적용으로 사용자 이탈률 감소"
+        "6개 광고 네트워크 미디에이션으로 글로벌 Fill rate 95% 달성",
+        "eCPM 15% 상승으로 광고 수익 증대",
+        "구독자 광고 면제로 프리미엄 UX 제공"
       ]
     }
   },
@@ -283,77 +224,51 @@ export const BENTO_ITEMS: BentoItemProps[] = [
     dark: true,
     details: {
       period: "2023.09 ~ 2024.12",
-      background: "차량 진단 기능은 인포카의 핵심 기능 중 하나로, 수천 가지의 DTC(고장 코드)를 정확하게 읽어내고 사용자에게 이해하기 쉬운 형태로 제공해야 했습니다. 특히 글로벌 사용자를 위해 다국어 번역과 AI 기반의 상세 분석 기능을 연동하여 단순한 코드 나열이 아닌 '해결책'을 제시하는 것이 목표였습니다.",
+      background: "차량 고장코드(DTC)를 단순히 읽어주는 것만으로는 사용자에게 충분한 가치를 제공하지 못했습니다. 사용자는 '이게 무슨 뜻이고, 어떻게 해야 하는가'를 알고 싶어했습니다. 또한 인포카 스캐너만의 차별점으로 표준(OBD-II) 외에 제조사별 확장 프로토콜도 지원해야 했고, 진단 결과를 서버에 동기화하여 이력 관리 및 고객 지원 시 활용할 수 있어야 했습니다.",
       tasks: [
         {
-          title: "진단 페이지 UI/UX 전면 리뉴얼",
+          title: "DTC 코드 진단 시스템",
           items: [
-            "차량 진단 메인 페이지: 최근 진단 결과, 진단/삭제 버튼, 도움말 배치",
-            "진단 결과 페이지: ECU별 고장 코드 목록, 상태별 색상 구분 (현재/과거/임시)",
-            "진단 내역 페이지: 날짜별 진단 기록, 필터링 및 검색 기능",
-            "고장 코드 삭제 페이지: 삭제 가능한 코드 목록, 일괄/개별 삭제",
+            "표준 OBD-II 프로토콜 기반 DTC 조회 및 삭제",
+            "DTC 상세 정보 API 연동: 코드별 설명, 원인, 해결 방법 제공",
+            "진단 결과 UI: ECU별 고장 코드 목록, 상태별 색상 구분 (현재/과거/임시)",
             "고장 코드 상세 페이지: 코드 설명, 원인, 해결 방법, 구글 검색 연동"
           ]
         },
         {
-          title: "API 연동",
+          title: "확장 진단 프로토콜 지원",
           items: [
-            "Coverage API: 차량별 지원 ECU 및 진단 항목 조회",
-            "DTC Info API: 고장 코드별 상세 설명 및 해결 방법",
-            "진단 결과 저장 API: 클라우드 백업 및 동기화",
-            "API 호출 위치 최적화: 불필요한 중복 호출 제거"
+            "제조사별 독자 프로토콜(현대/기아 UDS, BMW ISTA 등) 분기 처리",
+            "Coverage API 연동: 차량별 지원 ECU 및 진단 항목 동적 로딩",
+            "프로파일 기반 진단: 사용자가 구매한 프로파일에 따라 진단 범위 설정"
           ]
         },
         {
-          title: "진단 내역 관리",
+          title: "진단 이력 관리",
           items: [
             "Room DB 설계: 진단 결과, 고장 코드, ECU 정보 테이블 구조",
-            "ViewModel 추가: 진단 결과 저장을 위한 상태 관리",
-            "날짜 포맷 통일: iOS와 동일한 포맷 적용"
-          ]
-        },
-        {
-          title: "다국어 지원",
-          items: [
-            "12개 언어 번역: 한국어, 영어, 일본어, 중국어, 아랍어, 러시아어 등",
-            "RTL 레이아웃: 아랍어 등 RTL 언어 레이아웃 미러링",
-            "문자열 리소스 관리: strings.xml 체계적 관리"
-          ]
-        },
-        {
-          title: "진단 완료 알림 시스템",
-          items: [
-            "알림 설정 페이지: 알림 ON/OFF, 알림 조건 설정",
-            "고장 코드 발견 시 푸시: 현재/임시 고장 코드 발견 시 알림",
-            "알람 서비스: DrivingAlarmWorker 기반 백그라운드 알림"
-          ]
-        },
-        {
-          title: "ViewPager2 최적화",
-          items: [
-            "재생성 방지: offscreenPageLimit 설정으로 Fragment 캐싱",
-            "회전 시 상태 보존: SavedStateHandle로 진단 상태 유지",
-            "프로그레스 색상: 표준/제조사 진단별 색상 구분"
+            "서버 동기화: 진단 결과를 클라우드에 백업하여 앱 재설치 시 복구",
+            "날짜별 진단 기록: 필터링 및 검색 기능 제공"
           ]
         }
       ],
-      techStack: ["Kotlin", "Retrofit", "Room", "ViewPager2", "ViewModel", "LiveData", "Coroutines", "SavedStateHandle", "WorkManager"],
+      techStack: ["Kotlin", "Retrofit", "Room", "ViewModel", "LiveData", "Handler"],
       challenges: [
         {
-          title: "대용량 진단 데이터의 실시간 처리 및 UI 스레드 최적화",
-          problem: "차량 전체 시스템 스캔 시 수백 개의 PID 요청이 발생하며, 응답 데이터가 방대하여 UI 스레드에서 처리할 경우 앱이 버벅이는 현상(ANR)이 발생할 우려가 있었습니다.",
-          solution: "Kotlin Coroutines와 Flow를 활용하여 진단 통신 로직을 IO 스레드로 완전히 분리했습니다. 진단 진행률과 결과를 StateFlow로 방출하고, UI에서는 이를 구독하여 실시간으로 부드럽게 업데이트되도록 비동기 파이프라인을 구축했습니다."
+          title: "제조사별 프로토콜 차이",
+          problem: "OBD-II 표준과 제조사 확장 프로토콜이 혼재하여 단일 로직으로 처리 불가능했습니다.",
+          solution: "Strategy 패턴으로 프로토콜 핸들러를 추상화하고, 차종 선택 시 적절한 핸들러가 주입되도록 설계했습니다."
         },
         {
-          title: "제조사별 비표준 프로토콜 대응",
-          problem: "표준 OBD-II 프로토콜 외에 제조사별(현대/기아, BMW 등) 독자적인 진단 프로토콜이 혼재되어 있어, 단일 로직으로 처리하기 불가능했습니다.",
-          solution: "Strategy 패턴을 적용하여 제조사별 프로토콜 핸들러를 추상화했습니다. 앱 시작 시 선택된 차종에 따라 적절한 핸들러가 주입되도록 하여, 핵심 진단 로직은 유지하면서도 다양한 차종을 유연하게 확장할 수 있는 구조를 만들었습니다."
+          title: "블루투스 연결 불안정",
+          problem: "진단 중 BLE 연결이 끊기면 진단 상태가 꼬이는 문제가 발생했습니다.",
+          solution: "연결 상태 모니터링 로직을 추가하고, 타임아웃 및 재시도 메커니즘을 구현하여 안정성을 확보했습니다."
         }
       ],
       results: [
-        "진단 속도 30% 향상 및 ANR 발생률 0% 달성",
-        "글로벌 진단 데이터베이스 구축으로 해외 유저 만족도 상승",
-        "비표준 프로토콜 모듈화로 신규 차종 지원 기간 단축"
+        "OBD-II 표준 + 제조사 확장 프로토콜 통합 진단 시스템 구축",
+        "진단 이력 서버 동기화로 고객 지원 효율화",
+        "프로파일 기반 맞춤 진단으로 프리미엄 구독 전환율 기여"
       ]
     }
   },
@@ -375,7 +290,6 @@ export const BENTO_ITEMS: BentoItemProps[] = [
             "워크플로우 설계: master/develop 브랜치 push 시 자동 빌드/배포",
             "Gradle 캐싱으로 빌드 시간 50% 단축",
             "Slack 연동: 빌드 성공/실패 시 실시간 알림",
-            "Unit Test 환경: JUnit 5, Mockito, Jacoco 커버리지",
             "Firebase App Distribution / Play Store 자동 배포"
           ]
         },
@@ -384,8 +298,7 @@ export const BENTO_ITEMS: BentoItemProps[] = [
           items: [
             "WebView Bridge: JavaScript Interface로 Native-Web 양방향 통신",
             "미션 시스템: 진단, 주행 등 앱 기능과 연동된 미션 달성 추적",
-            "Orbit MVI 적용: 단방향 데이터 플로우로 상태 관리",
-            "웹뷰 Pre-warming으로 로딩 속도 개선"
+            "Orbit MVI 적용: 단방향 데이터 플로우로 상태 관리"
           ]
         },
         {
@@ -393,7 +306,6 @@ export const BENTO_ITEMS: BentoItemProps[] = [
           items: [
             "MOBD 프로파일 관리: 차량별 지원 프로파일 표시 및 구매 상태 관리",
             "암호화 DB 다운로드: SQLCipher로 보안 강화",
-            "제조사 진단: 표준 외 제조사별 고유 DTC 조회",
             "데이터 주도 설계: PID 매핑 테이블로 다양한 차종 지원"
           ]
         }
@@ -403,22 +315,17 @@ export const BENTO_ITEMS: BentoItemProps[] = [
         {
           title: "CI/CD 빌드 환경 일관성 및 보안",
           problem: "개발자마다 환경이 달라 빌드 결과물이 상이하고, Keystore 등 민감 정보 관리가 필요했습니다.",
-          solution: "GitHub Secrets로 민감 정보 암호화 저장, Docker 기반 클린 빌드 환경 구축"
+          solution: "GitHub Secrets로 민감 정보 암호화 저장, Gradle 캐싱으로 빌드 시간 단축"
         },
         {
           title: "Native-Web 간 비동기 통신",
           problem: "JavaScript Interface는 동기적으로 값 반환이 어려운 구조였습니다.",
           solution: "요청 ID 기반 메시지 큐 시스템으로 비동기 데이터 주입 패턴 정립"
-        },
-        {
-          title: "제조사별 PID 주소 체계 관리",
-          problem: "같은 데이터라도 제조사마다 PID 주소와 응답 수식이 다릅니다.",
-          solution: "SQLite DB 기반 PID 매핑 테이블로 데이터 주도(Data-Driven) 설계 적용"
         }
       ],
       results: [
         "빌드 및 배포 소요 시간 90% 단축",
-        "하이브리드 앱 아키텍처 사내 표준 프레임워크 등재",
+        "게이미피케이션으로 앱 체류 시간 증가",
         "프리미엄 구독 전환율 20% 상승"
       ]
     }
@@ -433,91 +340,50 @@ export const BENTO_ITEMS: BentoItemProps[] = [
     dark: true,
     details: {
       period: "2024.02 ~ 2025.01",
-      background: "운전 중에는 내비게이션 앱(Tmap, KakaoNavi)이 화면을 점유하고 있어, 인포카 앱의 대시보드를 확인하기 위해 앱을 전환하는 것은 매우 위험합니다. 사용자가 내비게이션을 보면서 동시에 차량의 핵심 상태(속도, 연비, 방향지시등)를 안전하게 확인할 수 있도록 'Floating UI(오버레이)' 기능 개발이 시급했습니다.",
+      background: "인포카 스캐너를 연결해 데이터를 보려면 폰을 거치대에 꽂고 인포카 앱을 켜야 했습니다. 하지만 대부분의 사용자는 이미 Tmap, 카카오내비 등을 사용하고 있어 '내비게이션을 포기하고 인포카를 볼 것인가'의 양자택일을 강요받았습니다. Android Auto를 지원하면 차량 디스플레이에서 인포카를 보고, 폰에서는 내비게이션을 유지할 수 있어 이 문제를 해결할 수 있었습니다.",
       tasks: [
         {
-          title: "Android Auto 화면 구현",
+          title: "Android Auto 앱 구조 설계",
           items: [
-            "표준 대시보드 화면: 속도, RPM, 연비 등 기본 OBD 데이터 표시",
-            "제조사 대시보드 화면: 프리미엄 사용자용 상세 데이터 표시",
-            "메뉴 구조: 대시보드 → 표준/제조사 선택 화면"
+            "CarAppService 상속 및 Session 관리",
+            "Screen 기반 화면 스택 관리",
+            "CarContext를 통한 리소스 및 시스템 서비스 접근"
           ]
         },
         {
-          title: "ECU 서칭 중 접근 제한",
+          title: "대시보드 화면 개발",
           items: [
-            "데이터 준비 체크: ECU 서칭 완료 전 대시보드 접근 차단",
-            "로딩 상태 표시: 서칭 중 프로그레스 표시",
-            "토스트 메시지: 접근 제한 시 안내 메시지"
+            "표준 대시보드: 속도, RPM, 연비 등 기본 OBD 데이터 표시",
+            "제조사 대시보드: 프리미엄 사용자용 확장 데이터 표시",
+            "Pane, Row, GridItem 템플릿 활용 UI 구성"
           ]
         },
         {
-          title: "화면 전환 처리",
+          title: "실시간 데이터 동기화",
           items: [
-            "대시보드 간 전환: 표준 ↔ 제조사 대시보드 전환",
-            "앱 ↔ Auto 동기화: 앱에서 설정 변경 시 Auto에 반영",
-            "뒤로가기 처리: 화면 스택 관리"
+            "LiveData 구독으로 OBD 데이터 실시간 반영",
+            "invalidate() 호출 최적화로 불필요한 리렌더링 방지",
+            "앱 ↔ Auto 설정 동기화 (SharedPreferences 리스너)"
           ]
-        },
-        {
-          title: "Context 관리",
-          items: [
-            "Android Auto 전용 Context: CarContext 사용",
-            "리소스 접근: 테마, 문자열 등 리소스 적절히 로딩",
-            "생명주기 관리: Session, Screen 생명주기 처리"
-          ]
-        },
-        {
-          title: "연결 상태 처리",
-          items: [
-            "OBD 연결 체크: 연결 안 된 상태에서 접근 시 안내",
-            "연결 끊김 처리: 주행 중 연결 끊김 시 UI 업데이트",
-            "자동 재연결: 연결 끊김 후 자동 재연결 시도"
-          ]
-        },
-        {
-          title: "디자인 가이드라인 준수",
-          items: [
-            "운전자 주의 분산 최소화: 간결한 UI, 큰 텍스트",
-            "터치 영역: 최소 터치 영역 76dp 준수",
-            "색상 대비: WCAG 가이드라인 준수"
-          ]
-        },
+        }
       ],
       techStack: ["Android Auto SDK", "CarAppService", "Session", "Screen", "Kotlin", "LiveData"],
       challenges: [
         {
           title: "제한된 UI 컴포넌트",
-          problem: "Android Auto는 사용 가능한 UI 컴포넌트가 제한적",
-          solution: "Pane, Row, GridItem 등 지원 컴포넌트로 UI 재구성"
+          problem: "Android Auto는 Custom View를 허용하지 않고 템플릿 기반 UI만 지원합니다.",
+          solution: "Pane, Row, GridItem 등 지원 컴포넌트를 조합하여 대시보드 UI를 재구성하고, 텍스트 기반 데이터 표시로 전환했습니다."
         },
         {
-          title: "실시간 데이터 업데이트",
-          problem: "차량 디스플레이에 데이터가 지연되어 표시",
-          solution: "invalidate() 호출 최적화, 데이터 변경 시에만 갱신"
-        },
-        {
-          title: "앱-Auto 상태 동기화",
-          problem: "앱에서 변경한 설정이 Auto에 반영되지 않음",
-          solution: "SharedPreferences 변경 리스너로 실시간 동기화"
-        },
-        {
-          title: "Context 타입 캐스팅",
-          problem: "MainActivity로 캐스팅 시 ClassCastException",
-          solution: "CarContext 여부 체크 후 분기 처리"
-        },
-        {
-          title: "대시보드 선택 제조사 데이터 사용 시 제한",
-          problem: "프로파일 미구매 사용자가 제조사 대시보드 접근 시도",
-          solution: "구매 여부 체크, 미구매 시 안내 메시지 표시"
+          title: "앱-Auto 간 상태 동기화",
+          problem: "폰 앱에서 설정을 변경해도 Auto 화면에 즉시 반영되지 않았습니다.",
+          solution: "SharedPreferences.OnSharedPreferenceChangeListener를 등록하여 설정 변경 시 Auto 화면을 즉시 갱신하도록 구현했습니다."
         }
       ],
       results: [
-        "Android Auto 지원으로 신규 사용자 유입",
-        "운전 중 안전한 데이터 확인 가능",
-        "Google Play Auto 카테고리 등록",
-        "앱 사용 편의성 향상 (핸드폰 조작 불필요)",
-        "사용자 리뷰 평점 향상"
+        "Google Play Auto 카테고리 등록으로 신규 유입 채널 확보",
+        "운전 중 핸드폰 조작 없이 차량 디스플레이에서 데이터 확인",
+        "내비게이션과 인포카 동시 사용 가능한 UX 제공"
       ]
     }
   },
@@ -542,72 +408,39 @@ export const BENTO_ITEMS: BentoItemProps[] = [
           ]
         },
         {
-          title: "실시간 데이터 표시",
-          items: [
-            "표시 항목: 속도, RPM, 연비, 주행 거리, 주행 시간",
-            "사용자 설정: 표시할 항목 선택 가능",
-            "단위 변환: 사용자 설정에 따른 단위 자동 변환",
-            "데이터 캐싱: 빈번한 업데이트에 대비한 캐싱 처리"
-          ]
-        },
-        {
-          title: "드래그 이동 기능",
+          title: "드래그 이동 및 위치 저장",
           items: [
             "터치 이벤트 처리: ACTION_DOWN, ACTION_MOVE, ACTION_UP",
             "화면 경계 제한: 화면 밖으로 나가지 않도록 제한",
-            "위치 저장: SharedPreferences에 마지막 위치 저장"
+            "위치 저장: SharedPreferences에 마지막 위치 저장 및 복원"
           ]
         },
         {
-          title: "크기 조절 기능",
+          title: "생명주기 및 권한 관리",
           items: [
-            "크기 고정 옵션: 사용자가 원하는 크기로 고정",
-            "리사이즈 핸들: 모서리 드래그로 크기 조절",
-            "최소/최대 크기 제한: UX를 위한 크기 범위 설정"
-          ]
-        },
-        {
-          title: "생명주기 관리",
-          items: [
-            "MainActivity LifeCycle Observer: Activity 생명주기와 동기화",
-            "Service 생명주기: onStartCommand, onDestroy 적절한 처리",
-            "자동 시작/종료: 주행 시작 시 자동 표시, 종료 시 자동 숨김"
-          ]
-        },
-        {
-          title: "권한 관리",
-          items: [
-            "SYSTEM_ALERT_WINDOW 권한: 오버레이 권한 요청 플로우",
-            "권한 체크: 오버레이 시작 전 권한 확인",
-            "설정 화면 이동: 권한 없을 시 시스템 설정으로 안내"
-          ]
-        },
-        {
-          title: "배터리 최적화",
-          items: [
-            "업데이트 주기 조절: 초당 업데이트 횟수 제한",
-            "화면 꺼짐 시 중지: 화면 OFF 시 업데이트 중단",
-            "Doze 모드 대응: 백그라운드 제한 우회"
+            "Foreground Service 연동으로 백그라운드 안정성 확보",
+            "SYSTEM_ALERT_WINDOW 권한 요청 플로우 구현",
+            "주행 시작/종료 시 자동 표시/숨김"
           ]
         }
       ],
-      techStack: ["Kotlin", "WindowManager", "Service", "Foreground Service", "LiveData", "LifecycleObserver", "SharedPreferences"],
+      techStack: ["Kotlin", "WindowManager", "Foreground Service", "LiveData", "SharedPreferences"],
       challenges: [
         {
-          title: "안드로이드 버전별 WindowManager 권한 및 정책 대응",
-          problem: "Android 10부터 '다른 앱 위에 그리기' 권한 정책이 강화되었고, 최신 버전에서는 백그라운드에서의 서비스 실행 제약이 심해져 오버레이가 강제 종료되는 이슈가 있었습니다.",
-          solution: "Foreground Service를 필수로 연동하고, Notification 채널을 통해 서비스가 사용자에 의해 인지되고 있음을 시스템에 알렸습니다. 또한 `TYPE_APPLICATION_OVERLAY` 윈도우 타입을 사용하여 최신 정책을 준수하면서도 안정적으로 뷰를 유지했습니다."
+          title: "안드로이드 버전별 권한 정책 대응",
+          problem: "Android 10부터 '다른 앱 위에 그리기' 권한 정책이 강화되어 오버레이가 강제 종료되는 이슈가 있었습니다.",
+          solution: "Foreground Service를 필수로 연동하고, TYPE_APPLICATION_OVERLAY 윈도우 타입을 사용하여 최신 정책을 준수했습니다."
         },
         {
-          title: "다양한 내비게이션 앱과의 UI 간섭 최소화",
-          problem: "오버레이가 내비게이션의 회전 안내나 도착 예정 시간 같은 중요 정보를 가리는 경우가 발생했습니다.",
-          solution: "사용자가 자유롭게 오버레이 위치를 드래그하여 이동할 수 있게 하고, 해당 위치 좌표를 SharedPreferences에 저장하여 다음 실행 시 복원해주는 UX를 구현했습니다. 또한 '투명도 조절'과 '최소화 모드(작은 아이콘)'를 지원하여 간섭을 최소화했습니다."
+          title: "내비게이션 앱과의 UI 간섭",
+          problem: "오버레이가 내비게이션의 중요 정보(회전 안내, 도착 예정 시간)를 가리는 문제가 발생했습니다.",
+          solution: "드래그 이동 및 위치 저장 기능을 구현하고, 투명도 조절과 최소화 모드를 지원하여 간섭을 최소화했습니다."
         }
       ],
       results: [
-        "앱 체류 시간(TSE) 감소 없이 백그라운드 실행 시간 40% 증가",
-        "운전자 안전 운전 보조 기능으로 호평 (스토어 리뷰 언급 1위 기능)",
-        "내비게이션 + 인포카 동시 사용 패턴 정착"
+        "운전자 안전 보조 기능으로 스토어 리뷰 언급 1위",
+        "내비게이션 + 인포카 동시 사용 패턴 정착",
+        "백그라운드 실행 시간 40% 증가"
       ]
     }
   },
@@ -626,85 +459,45 @@ export const BENTO_ITEMS: BentoItemProps[] = [
         {
           title: "엑셀 내보내기 기능",
           items: [
-            "Apache POI 활용: 엑셀 파일 생성 라이브러리 적용",
-            "종합 데이터 시트: 주행 요약, 상세 기록, 이벤트 통계 시트 분리",
-            "엑셀 포맷 통일: iOS와 동일한 포맷 적용",
-            "공유 기능: 생성된 엑셀 파일 외부 앱으로 공유",
-            "메모리 효율화: 스트리밍 방식으로 대용량 데이터 처리"
+            "Apache POI 활용: 주행 요약, 상세 기록, 이벤트 통계 시트 분리",
+            "스트리밍 방식 처리: 대용량 데이터 메모리 효율화",
+            "iOS와 동일한 포맷: 크로스 플랫폼 일관성 확보"
+          ]
+        },
+        {
+          title: "이벤트 카운트 시스템",
+          items: [
+            "급가속/급감속/과속 감지: 가속도 임계값 기반 실시간 카운트",
+            "EVENT_COUNT 테이블 설계: 이벤트 유형별 통계 저장",
+            "DB 접근 횟수 최적화: 배치 처리로 퍼포먼스 개선"
           ]
         },
         {
           title: "주행 목적 관리",
           items: [
             "기본 주행 목적 설정: 차량별/사용자별 기본 목적 지정",
-            "커스텀 주행 목적: 사용자 정의 주행 목적 추가",
-            "주행 목적 자동 적용: 주행 시작 시 기본 목적 자동 설정",
-            "목적 수정: 주행 완료 후 목적 변경 가능",
-            "비즈 관리자 설정: 관리자가 지정한 목적 사용 시 기능 제한"
-          ]
-        },
-        {
-          title: "이벤트 카운트 시스템",
-          items: [
-            "급가속 감지: 가속도 임계값 초과 시 카운트",
-            "급감속 감지: 감속도 임계값 초과 시 카운트",
-            "과속 감지: 설정 속도 초과 시 카운트",
-            "DB 컬럼 추가: EVENT_COUNT 테이블 설계",
-            "퍼포먼스 개선: DB 접근 횟수 최적화"
-          ]
-        },
-        {
-          title: "GPS 주행 거리 측정",
-          items: [
-            "OBD vs GPS 선택: 사용자가 측정 방식 선택 가능",
-            "GPS 거리 계산: 위치 좌표 기반 거리 계산 알고리즘",
-            "정확도 보정: GPS 오차 보정 로직 적용",
-            "오버레이 연동: 오버레이 뷰에도 GPS 거리 표시"
-          ]
-        },
-        {
-          title: "상세 주행 기록",
-          items: [
-            "시간대별 데이터: 속도, RPM, 연비 시계열 데이터",
-            "그래프 시각화: MPAndroidChart로 데이터 그래프 표시",
-            "주소 변환: 좌표를 주소로 변환 (역지오코딩)",
-            "다시보기 기능: 주행 경로 재생 (Replay)"
-          ]
-        },
-        {
-          title: "서버 동기화",
-          items: [
-            "주행 기록 백업 API: 클라우드 백업",
-            "복구 API: 앱 재설치 시 데이터 복구",
-            "DRVREC/DRVREC_CUSTOM API: 주행 기록 및 커스텀 기록 동기화"
-          ]
-        },
-        {
-          title: "주행 기록 수정",
-          items: [
-            "출발지/도착지 수정: 주소 직접 입력 또는 지도에서 선택",
-            "주행 목적 수정: 완료된 주행의 목적 변경",
-            "메모 추가: 주행에 대한 메모 기록"
+            "법인 관리자 설정: 관리자가 지정한 목적 사용 시 기능 제한",
+            "주행 완료 후 수정: 출발지/도착지, 목적, 메모 편집"
           ]
         }
       ],
-      techStack: ["Kotlin", "Apache POI", "Room", "MPAndroidChart", "Retrofit", "Google Maps API", "Coroutines"],
+      techStack: ["Kotlin", "Apache POI", "Room", "MPAndroidChart", "Retrofit", "Google Maps API"],
       challenges: [
         {
-          title: "빌드 환경의 일관성 확보 및 보안",
-          problem: "개발자마다 JDK 버전이나 환경 변수 설정이 조금씩 달라 빌드 결과물이 상이할 수 있었고, Keystore와 같은 민감한 서명 키를 안전하게 관리하는 것이 중요했습니다.",
-          solution: "GitHub Secrets를 활용하여 Keystore 및 API Key를 암호화하여 저장하고, 워크플로우 실행 시에만 복호화하여 주입되도록 구성했습니다. Docker 컨테이너 기반의 클린 빌드 환경을 구축하여 언제나 동일한 환경에서 빌드가 수행됨을 보장했습니다."
+          title: "대용량 주행 데이터 처리",
+          problem: "장거리 주행 시 초 단위 데이터가 수만 건에 달해 엑셀 생성 시 OOM이 발생했습니다.",
+          solution: "Apache POI의 SXSSF(Streaming Usermodel)를 적용하여 메모리 사용량을 제한하고, 백그라운드 스레드에서 처리했습니다."
         },
         {
-          title: "다양한 배포 채널 자동화 (Slack, Firebase, Play Store)",
-          problem: "QA용 내부 배포와 실사용자용 프로덕션 배포의 프로세스가 달라야 했으며, 빌드 완료 시 관련 담당자에게 즉시 알림이 가야 했습니다.",
-          solution: "트리거 조건(Push to Dev, Tagging Release)에 따라 워크플로우를 분기했습니다. QA 빌드는 Firebase App Distribution으로 업로드 후 Slack 웹훅으로 자동 알림을 전송하고, 프로덕션 빌드는 구글 플레이 콘솔 API를 연동하여 내부 테스트 트랙으로 자동 업로드되도록 파이프라인을 구축했습니다."
+          title: "주행 목적 데이터 정합성",
+          problem: "법인 사용자가 주행 목적을 임의로 수정하면 운행 일지의 신뢰성이 떨어지는 문제가 있었습니다.",
+          solution: "관리자 설정 목적은 수정 불가로 처리하고, 수정 이력을 서버에 기록하여 감사 추적이 가능하도록 구현했습니다."
         }
       ],
       results: [
-        "빌드 및 배포 소요 시간 90% 단축 (수동 개입 0)",
-        "배포 프로세스 실수(잘못된 버전 코드 등) 완전 차단",
-        "개발자가 빌드 대기 시간 없이 코딩에 집중할 수 있는 환경 조성"
+        "국세청 양식 운행 일지 엑셀 내보내기 기능 구현",
+        "급가속/급감속 이벤트 통계로 운전 습관 분석 제공",
+        "법인 관리자 권한 분리로 데이터 신뢰성 확보"
       ]
     }
   },
@@ -718,81 +511,50 @@ export const BENTO_ITEMS: BentoItemProps[] = [
     dark: true,
     details: {
       period: "2024.05 ~ 2024.08",
-      background: "사용자가 일일이 차량 정보를 입력하는 번거로움을 줄이기 위해, 차대번호(VIN)만으로 차량 정보를 자동 완성하는 시스템이 필요했습니다. VIN(Vehicle Identification Number)을 활용하여 차량 정보를 자동으로 입력하고, 직관적인 UI로 등록 과정을 간소화해야 했습니다.",
+      background: "기존에는 사용자가 제조사, 모델, 연식을 직접 입력해야 했고, 입력 오류가 잦아 '진단이 안 된다'는 CS가 많았습니다. 차대번호(VIN) 17자리에는 제조사, 모델, 연식 정보가 인코딩되어 있으므로, 이를 파싱하여 차량 정보를 자동 완성하면 사용자 경험과 데이터 정확도를 동시에 개선할 수 있었습니다.",
       tasks: [
         {
           title: "VIN 파싱 로직 구현",
           items: [
-            "17자리 VIN 분석: 제조사, 차량 특성, 생산 연도, 공장, 일련번호 추출",
-            "제조사 코드 매핑: WMI (World Manufacturer Identifier) 코드 → 제조사명",
-            "연식 추출: 10번째 자리 코드로 생산 연도 계산",
-            "모델 추론: VDS (Vehicle Descriptor Section)로 모델 정보 추출",
-            "예외 처리: 잘못된 VIN 형식 검증, errorVin 처리"
-          ]
-        },
-        {
-          title: "제조사 로고 적용",
-          items: [
-            "23개 제조사 로고: 현대, 기아, 제네시스, BMW, 벤츠, 아우디 등",
-            "고해상도 이미지: 300x300 SVG → PNG 변환",
-            "국가별 정렬: 한국(현대/기아 우선), 기타 국가(알파벳 순)",
-            "다크/라이트 모드: 테마별 로고 색상 대응"
+            "17자리 VIN 분석: WMI(제조사), VDS(차량 특성), VIS(생산 연도/공장/일련번호) 추출",
+            "제조사 코드 매핑: WMI 코드 → 제조사명 변환 테이블",
+            "연식 추출: 10번째 자리 코드로 생산 연도 계산 (1980~2030 대응)"
           ]
         },
         {
           title: "제조사/모델/연식 선택 UI",
           items: [
             "계층형 선택: 제조사 → 모델 → 연식 순서대로 선택",
-            "GridLayout 적용: 제조사 아이콘 그리드 형태 배치",
-            "기선택 표시: 이미 선택된 항목 체크 표시",
-            "검색 기능: 제조사/모델명 검색"
-          ]
-        },
-        {
-          title: "차량 이미지 관리",
-          items: [
-            "내부 저장소 저장: 차량 사진 내부 저장소에 저장",
-            "이미지 압축: 업로드 전 이미지 크기 최적화",
-            "삭제 시 정리: 차량 삭제 시 연관 이미지 파일 삭제"
+            "GridLayout 적용: 제조사 로고 그리드 형태 배치 (23개 제조사)",
+            "검색 기능: 제조사/모델명 검색 지원"
           ]
         },
         {
           title: "서버 동기화",
           items: [
-            "차량 등록 API: 새 차량 정보 서버 업로드",
-            "차량 수정 API: 기존 차량 정보 수정",
-            "차량 삭제 API: 서버에서 차량 정보 삭제",
-            "VIN/OBD SN 저장: 스캐너 연결 시 자동 저장",
-            "복구 API: 앱 재설치 시 차량 목록 복구"
-          ]
-        },
-        {
-          title: "차량 정보 페이지 레이아웃",
-          items: [
-            "메인 페이지: 등록된 차량 목록, 차량 추가 버튼",
-            "상세 페이지: 차량 이미지, 정보, 편집/삭제 버튼",
-            "가로 모드 대응: 태블릿 가로 모드 레이아웃",
-            "드로어 연동: 사이드 메뉴에서 차량 목록 표시"
+            "차량 CRUD API: 등록/수정/삭제/복구 API 연동",
+            "VIN 자동 저장: OBD 스캐너 연결 시 VIN 자동 추출 및 저장",
+            "앱 재설치 시 차량 목록 복구"
           ]
         }
       ],
-      techStack: ["Kotlin", "Retrofit", "Glide", "Room", "GridLayout", "SharedPreferences"],
+      techStack: ["Kotlin", "Retrofit", "Glide", "Room", "GridLayout"],
       challenges: [
         {
-          title: "이종 데이터 소스 통합 및 실시간 처리",
-          problem: "속도, RPM 등 OBD-II 센서 데이터가 초당 수십 회 업데이트되며, 차종마다 지원하는 PID가 달라 데이터 정합성을 맞추기 어려웠습니다. 또한, 각기 다른 단위를 가진 데이터를 하나의 그래프 컴포넌트에서 유연하게 보여줘야 했습니다.",
-          solution: "Interface 기반의 데이터 어댑터 패턴을 도입하여 표준화된 데이터 모델을 정의했습니다. 이를 통해 어떤 센서 데이터가 들어오더라도 대시보드 UI 컴포넌트는 동일한 인터페이스로 데이터를 구독(Subscribe)하여 렌더링하도록 설계하여, 데이터 소스와 UI의 의존성을 완벽히 분리했습니다."
+          title: "VIN 파싱 정확도",
+          problem: "제조사별로 VIN 인코딩 규칙이 조금씩 달라 일부 차종에서 파싱 오류가 발생했습니다.",
+          solution: "제조사별 예외 케이스를 데이터베이스화하고, 파싱 실패 시 수동 입력 폴백을 제공했습니다."
         },
         {
-          title: "다양한 UI 레이아웃의 동적 렌더링",
-          problem: "사용자 커스텀이 가능한 대시보드 특성상, 그리드 시스템 안에서 다양한 크기와 형태의 위젯이 배치되어야 했고, 화면 회전이나 해상도 변경 시에도 레이아웃이 깨지지 않아야 했습니다.",
-          solution: "Android ConstraintLayout과 Custom View를 활용하여 비율 기반의 반응형 그리드 시스템을 자체 구축했습니다. XML이 아닌 코드로 뷰를 동적 생성하되, 뷰 풀링(View Pooling) 기법을 적용하여 스크롤이나 화면 전환 시의 메모리 할당을 최소화하고 렌더링 성능을 최적화했습니다."
+          title: "차량 이미지 용량 관리",
+          problem: "고화질 차량 사진 업로드 시 서버 부하와 네트워크 지연이 발생했습니다.",
+          solution: "업로드 전 이미지 압축(Bitmap.compress)을 적용하고, 내부 저장소 캐싱으로 재업로드를 방지했습니다."
         }
       ],
       results: [
-        "코드 중복 제거로 신규 위젯 개발 속도 50% 단축",
-        "단일 모듈로 두 개의 메인 앱(B2C, B2B) 동시 지원 체계 구축",
-        "실시간 데이터 시각화 프레임 드랍 0%에 가까운 최적화 달성"
+        "VIN 기반 자동 완성으로 차량 등록 시간 70% 단축",
+        "입력 오류로 인한 진단 실패 CS 80% 감소",
+        "23개 제조사 지원으로 국내외 대부분 차종 커버"
       ]
     }
   },
