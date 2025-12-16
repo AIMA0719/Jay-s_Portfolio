@@ -20,7 +20,7 @@ const Hero: React.FC = () => {
         <FadeIn delay={0.4}>
           <div className="space-y-4">
             <p className="text-lg md:text-xl text-slate-500 max-w-2xl mx-auto leading-relaxed">
-              복잡한 문제를 <span className="text-primary-600 font-bold">심플한 코드</span>로,<br className="md:hidden" /> 딱딱한 기술을 <span className="text-primary-600 font-bold">유연한 경험</span>으로 바꿉니다.
+              앱 개발자로서의 <span className="text-primary-600 font-bold">워크 로드</span>를 소개합니다.
             </p>
           </div>
         </FadeIn>

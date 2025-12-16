@@ -7,7 +7,7 @@ export const PERSONAL_INFO = {
   email: "jayChoi57@gmail.com",
   github: "https://github.com/AIMA0719",
   shortIntro: "사용자의 경험을 중요시하는 개발자",
-  heroTitle: "개발자의 논리와,\n사용자의 경험을 위해",
+  heroTitle: "사용자의 경험을\n코드로 번역하는 개발자",
   about: "코드는 논리적이어야 하지만, 경험은 감성적이어야 한다고 믿습니다. 3.5년간 인포카에서 20개국 사용자의 피드백을 먹고 자랐습니다. 버그 잡는 것보다 사용자의 '아, 편하다'라는 한마디를 듣는 것을 더 좋아합니다.",
 };
 
