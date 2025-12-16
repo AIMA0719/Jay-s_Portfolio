@@ -24,7 +24,7 @@ export const BENTO_ITEMS: BentoItemProps[] = [
     cols: 2,
     dark: true,
     details: {
-      period: "2025.09 ~ 2025.12",
+      period: "2025.09 ~ 현재",
       background: "기존의 Infocar와 Infocar Biz 앱은 서로 다른 대시보드 코드를 유지보수하고 있어, 기능 추가 시 중복 개발과 버그 발생 위험이 컸습니다. 이를 해결하기 위해 하나의 통합된 대시보드 모듈을 설계하여 두 앱에서 공통으로 사용할 수 있는 구조가 필요했습니다. 단순히 UI를 통일하는 것을 넘어, OBD-II 데이터 처리 로직을 효율적으로 관리할 수 있는 아키텍처가 요구되었습니다.",
       tasks: [
         {
@@ -192,7 +192,7 @@ export const BENTO_ITEMS: BentoItemProps[] = [
     cols: 2,
     dark: true,
     details: {
-      period: "2023.09.06 ~ 2025.12.02",
+      period: "2024.05 ~ 2025.05",
       background: "기존의 Infocar와 Infocar Biz 앱은 서로 다른 대시보드 코드를 유지보수하고 있어, 기능 추가 시 중복 개발과 버그 발생 위험이 컸습니다. 이를 해결하기 위해 하나의 통합된 대시보드 모듈을 설계하여 두 앱에서 공통으로 사용할 수 있는 구조가 필요했습니다. 단순히 UI를 통일하는 것을 넘어, OBD-II 데이터 처리 로직을 효율적으로 관리할 수 있는 아키텍처가 요구되었습니다.",
       tasks: [
         {
@@ -282,7 +282,7 @@ export const BENTO_ITEMS: BentoItemProps[] = [
     cols: 1,
     dark: true,
     details: {
-      period: "2022.02.28 ~ 2025.12.15",
+      period: "2023.09 ~ 2024.12",
       background: "차량 진단 기능은 인포카의 핵심 기능 중 하나로, 수천 가지의 DTC(고장 코드)를 정확하게 읽어내고 사용자에게 이해하기 쉬운 형태로 제공해야 했습니다. 특히 글로벌 사용자를 위해 다국어 번역과 AI 기반의 상세 분석 기능을 연동하여 단순한 코드 나열이 아닌 '해결책'을 제시하는 것이 목표였습니다.",
       tasks: [
         {
@@ -432,7 +432,7 @@ export const BENTO_ITEMS: BentoItemProps[] = [
     cols: 1,
     dark: true,
     details: {
-      period: "2024.10 ~ 2025.02",
+      period: "2024.02 ~ 2025.01",
       background: "운전 중에는 내비게이션 앱(Tmap, KakaoNavi)이 화면을 점유하고 있어, 인포카 앱의 대시보드를 확인하기 위해 앱을 전환하는 것은 매우 위험합니다. 사용자가 내비게이션을 보면서 동시에 차량의 핵심 상태(속도, 연비, 방향지시등)를 안전하게 확인할 수 있도록 'Floating UI(오버레이)' 기능 개발이 시급했습니다.",
       tasks: [
         {
@@ -530,7 +530,7 @@ export const BENTO_ITEMS: BentoItemProps[] = [
     cols: 1,
     dark: true,
     details: {
-      period: "2024.01 ~ 2024.02",
+      period: "2024.01 ~ 2024.10",
       background: "운전 중에는 내비게이션 앱(Tmap, KakaoNavi)이 화면을 점유하고 있어, 인포카 앱의 대시보드를 확인하기 위해 앱을 전환하는 것은 매우 위험합니다. 사용자가 내비게이션을 보면서 동시에 차량의 핵심 상태(속도, 연비, 방향지시등)를 안전하게 확인할 수 있도록 'Floating UI(오버레이)' 기능 개발이 시급했습니다.",
       tasks: [
         {
@@ -620,7 +620,7 @@ export const BENTO_ITEMS: BentoItemProps[] = [
     cols: 1,
     dark: true,
     details: {
-      period: "2023.05.09 ~ 2025.12.15",
+      period: "2024.08 ~ 2025.04",
       background: "단순히 주행 후 '몇 km 갔다' 정도의 정보는 사용자에게 큰 가치를 주지 못했습니다. 법인 사용자는 '국세청 양식의 운행 일지'가 필요했고, 개인 사용자는 '나의 운전 습관(급가속, 급감속)'을 데이터로 증명받고 싶어 했습니다. 이를 위해 초 단위의 고해상도 주행 데이터를 수집하고 분석하는 시스템이 필요했습니다.",
       tasks: [
         {
@@ -717,7 +717,7 @@ export const BENTO_ITEMS: BentoItemProps[] = [
     cols: 1,
     dark: true,
     details: {
-      period: "2023.02.07 ~ 2025.06.12",
+      period: "2024.05 ~ 2024.08",
       background: "사용자가 일일이 차량 정보를 입력하는 번거로움을 줄이기 위해, 차대번호(VIN)만으로 차량 정보를 자동 완성하는 시스템이 필요했습니다. VIN(Vehicle Identification Number)을 활용하여 차량 정보를 자동으로 입력하고, 직관적인 UI로 등록 과정을 간소화해야 했습니다.",
       tasks: [
         {
@@ -805,7 +805,7 @@ export const BENTO_ITEMS: BentoItemProps[] = [
     cols: 2,
     dark: true,
     details: {
-      period: "2022.07.29 ~ 현재",
+      period: "2022.07 ~ 2025.02",
       background: "차량 유지비를 단순히 '얼마 썼다' 수준으로 기록하는 것은 사용자에게 실질적인 가치를 주지 못했습니다. 사용자는 주유 시 가장 가까운 주유소를 찾고, 정비 이력을 한눈에 보고, 영수증을 사진으로 보관하고 싶어했습니다. 이를 위해 위치 기반 검색, 영수증 서버 동기화, 소모품 주기 관리 등 실용적인 기능이 필요했습니다.",
       tasks: [
         {
