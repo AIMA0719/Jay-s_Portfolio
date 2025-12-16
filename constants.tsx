@@ -1,4 +1,4 @@
-import { Smartphone, Zap, Globe, TrendingUp, Car, Code, Database, LayoutTemplate, ShieldCheck, Wrench, BarChart3, Layers, LayoutDashboard, GitBranch, Bot, Truck, Megaphone, FileText, CarFront } from 'lucide-react';
+import { Car, Wrench, Layers, LayoutDashboard, Truck, Megaphone, FileText, CarFront, Receipt } from 'lucide-react';
 import { Experience, Skill, BentoItemProps } from './types';
 
 export const PERSONAL_INFO = {
@@ -15,155 +15,6 @@ export const PERSONAL_INFO = {
 
 export const BENTO_ITEMS: BentoItemProps[] = [
   // 2025 Projects (Sorted by latest)
-  {
-    id: 'cicd',
-    title: 'CI/CD Pipeline',
-    subtitle: '배포 자동화',
-    description: '반복적인 빌드/배포 과정을 자동화하여 개발 생산성을 높였습니다.',
-    icon: GitBranch,
-    cols: 2,
-    dark: true,
-    details: {
-      period: "2025.12.12",
-      background: "기존에는 개발자가 로컬 머신에서 수동으로 빌드하여 APK/AAB 파일을 추출하고, 슬랙으로 공유하거나 스토어에 업로드했습니다. 이 과정에서 Human Error가 빈번히 발생했고, 빌드 시간 동안 개발자가 다른 작업을 하지 못하는 비효율이 있었습니다. 이를 해결하기 위해 GitHub Actions를 도입하여 빌드부터 배포까지의 전 과정을 자동화하기로 결정했습니다.",
-      tasks: [
-        {
-          title: "GitHub Actions 워크플로우 설계",
-          items: [
-            "트리거 조건 설정: master/develop 브랜치 push 시 자동 실행",
-            "브랜치 보호 규칙: PR 머지 전 CI 통과 필수 설정",
-            "병렬 작업 구성: lint, build, test 단계 병렬 실행으로 시간 단축"
-          ]
-        },
-        {
-          title: "빌드 환경 구성",
-          items: [
-            "JDK 설정: actions/setup-java로 JDK 17 자동 설정",
-            "Gradle 캐싱: actions/cache로 .gradle 디렉토리 캐싱, 빌드 시간 50% 단축",
-            "Android SDK 설정: 필요한 SDK 컴포넌트 자동 설치",
-            "환경 변수 관리: GitHub Secrets로 API 키, 서명 키 등 민감 정보 관리"
-          ]
-        },
-        {
-          title: "Slack 연동",
-          items: [
-            "Webhook 설정: 빌드 성공/실패 시 git 채널에 실시간 알림",
-            "메시지 포맷: 커밋 정보, 빌드 시간, 실패 원인 등 상세 정보 포함",
-            "멘션 기능: 실패 시 담당 개발자 자동 멘션"
-          ]
-        },
-        {
-          title: "Unit Test 환경 구성",
-          items: [
-            "JUnit 5 설정: 테스트 프레임워크 최신 버전 적용",
-            "Mockito 연동: 의존성 모킹을 위한 라이브러리 설정",
-            "테스트 리포트: HTML 리포트 자동 생성 및 아티팩트 저장",
-            "코드 커버리지: Jacoco 연동으로 커버리지 측정"
-          ]
-        },
-        {
-          title: "라이브러리 최적화",
-          items: [
-            "jcenter 종료 대응: deprecated된 라이브러리 JitPack/Maven Central로 마이그레이션",
-            "ktx 라이브러리 정리: 미사용 라이브러리 제거, 버전 통일",
-            "의존성 충돌 해결: Gradle 의존성 트리 분석 후 exclude 규칙 적용"
-          ]
-        }
-      ],
-      techStack: ["GitHub Actions", "Gradle", "JUnit 5", "Mockito", "Jacoco", "Slack Webhook", "YAML", "Kotlin"],
-      challenges: [
-        {
-          title: "빌드 환경의 일관성 확보 및 보안",
-          problem: "개발자마다 JDK 버전이나 환경 변수 설정이 조금씩 달라 빌드 결과물이 상이할 수 있었고, Keystore와 같은 민감한 서명 키를 안전하게 관리하는 것이 중요했습니다.",
-          solution: "GitHub Secrets를 활용하여 Keystore 및 API Key를 암호화하여 저장하고, 워크플로우 실행 시에만 복호화하여 주입되도록 구성했습니다. Docker 컨테이너 기반의 클린 빌드 환경을 구축하여 언제나 동일한 환경에서 빌드가 수행됨을 보장했습니다."
-        },
-        {
-          title: "다양한 배포 채널 자동화 (Slack, Firebase, Play Store)",
-          problem: "QA용 내부 배포와 실사용자용 프로덕션 배포의 프로세스가 달라야 했으며, 빌드 완료 시 관련 담당자에게 즉시 알림이 가야 했습니다.",
-          solution: "트리거 조건(Push to Dev, Tagging Release)에 따라 워크플로우를 분기했습니다. QA 빌드는 Firebase App Distribution으로 업로드 후 Slack 웹훅으로 자동 알림을 전송하고, 프로덕션 빌드는 구글 플레이 콘솔 API를 연동하여 내부 테스트 트랙으로 자동 업로드되도록 파이프라인을 구축했습니다."
-        }
-      ],
-      results: [
-        "빌드 및 배포 소요 시간 90% 단축 (수동 개입 0)",
-        "배포 프로세스 실수(잘못된 버전 코드 등) 완전 차단",
-        "개발자가 빌드 대기 시간 없이 코딩에 집중할 수 있는 환경 조성"
-      ]
-    }
-  },
-  {
-    id: 'ai-manager',
-    title: 'AI Manager',
-    subtitle: 'Native-Web 브릿지',
-    description: '웹 기반 AI 서비스를 앱 내에서 Seamless하게 연결했습니다.',
-    icon: Bot,
-    cols: 1,
-    dark: true,
-    details: {
-      period: "2025.11 ~ 2025.12",
-      background: "인포카의 차별점인 AI 차량 진단 및 예측 정비 서비스를 앱에 빠르게 도입해야 했습니다. AI 엔진은 서버와 웹 기반으로 구축되어 있었으므로, 이를 네이티브 앱 경험과 이질감 없이 녹여내는 것이 관건이었습니다. 단순 WebView 로딩을 넘어, 앱의 센서 데이터가 웹으로 실시간 전달되어야 했습니다.",
-      tasks: [
-        {
-          title: "WebView Bridge 아키텍처 설계",
-          items: [
-            "JavaScript Interface 구현: @JavascriptInterface 어노테이션으로 Native 함수 노출",
-            "AI Manager Bridge 클래스: Web → Native 요청 처리 전담 클래스",
-            "AI Controller: Native → Web 데이터 전송 컨트롤러",
-            "양방향 통신 프로토콜: JSON 기반 메시지 규격 정의"
-          ]
-        },
-        {
-          title: "화면 이동 처리",
-          items: [
-            "딥링크 처리: 웹에서 요청한 Native 화면으로 이동",
-            "화면 스택 관리: 뒤로가기 시 올바른 화면으로 복귀",
-            "매니저 화면 이동 분석: 복잡한 화면 전환 플로우 설계"
-          ]
-        },
-        {
-          title: "Orbit MVI 적용",
-          items: [
-            "단방향 데이터 플로우: State → View → Intent → Reducer 사이클",
-            "상태 관리 일원화: AI Manager 관련 모든 상태를 ViewModel에서 관리",
-            "Side Effect 처리: 화면 이동, 토스트 등 일회성 이벤트 처리"
-          ]
-        },
-        {
-          title: "WebViewFragment 리팩토링",
-          items: [
-            "reload 구조 개선: 네트워크 오류 시 재시도 로직 체계화",
-            "에러 핸들링 강화: UNKNOWN ERROR 등 예외 상황 대응",
-            "메모리 관리: WebView 생명주기와 Fragment 생명주기 동기화"
-          ]
-        },
-        {
-          title: "달성 여부 로직",
-          items: [
-            "AI 미션 추적: 추천 미션의 달성 상태 실시간 동기화",
-            "로컬 캐싱: 네트워크 오류 시에도 마지막 상태 유지",
-            "서버 동기화: 달성 완료 시 서버에 결과 전송"
-          ]
-        }
-      ],
-      techStack: ["Kotlin", "WebView", "JavaScript Interface", "Orbit MVI", "Coroutines", "ViewModel", "LiveData"],
-      challenges: [
-        {
-          title: "Native-Web 간의 복잡한 비동기 데이터 통신 헨들링",
-          problem: "웹에서 AI 분석을 위해 앱 내의 주행 누적 데이터나 최신 진단 결과를 요청할 때, JavaScript Interface는 동기적으로 값을 반환하기 어려운 구조였습니다.",
-          solution: "요청 ID 기반의 메시지 큐 시스템을 설계했습니다. 웹이 요청을 보내면 앱은 즉시 '수신 확인'을 리턴하고, 백그라운드에서 데이터를 조회한 뒤 `window.onReceiveData(id, data)` 형태의 콜백 함수를 실행하여 비동기적으로 데이터를 주입하는 패턴을 정립했습니다."
-        },
-        {
-          title: "웹뷰 성능 최적화 및 UX 개선",
-          problem: "웹뷰 로딩 속도가 느려 사용자 이탈이 발생했고, 네이티브 화면 전환 시 상태가 초기화되는 문제가 있었습니다.",
-          solution: "앱 실행 시점에 웹뷰를 미리 워밍업(Pre-warming)하고, 화면이 백그라운드로 가더라도 프로세스를 즉시 kill하지 않도록 생명주기를 관리했습니다. 또한 로딩 중에는 네이티브 스켈레톤 UI를 보여주어 체감 대기 시간을 줄였습니다."
-        }
-      ],
-      results: [
-        "웹 기능 배포 즉시 앱에 반영되는 구조로 업데이트 주기 단축 (2주 → 즉시)",
-        "네이티브 개발 리소스 투입 없이 AI 신규 기능 지속 추가 가능 환경 구축",
-        "하이브리드 앱 아키텍처의 성공적 사례로 사내 표준 프레임워크 등재"
-      ]
-    }
-  },
   {
     id: 'dashboard',
     title: 'Preset Dashboard',
@@ -507,88 +358,68 @@ export const BENTO_ITEMS: BentoItemProps[] = [
     }
   },
   {
-    id: 'manufacturer-data',
-    title: 'Manufacturer Data',
-    subtitle: '제조사 전용 데이터',
-    description: '표준 OBD 데이터를 넘어 제조사 특화 데이터까지 제공합니다.',
-    icon: Database,
+    id: 'etc-works',
+    title: '기타 작업들',
+    subtitle: 'CI/CD, 게이미피케이션, 제조사 데이터',
+    description: '배포 자동화, 앱 내 게이미피케이션, 제조사 전용 데이터 등 다양한 기능을 개발했습니다.',
+    icon: Wrench,
     cols: 2,
     dark: true,
     details: {
-      period: "2023.03.13 ~ 2025.10.23",
-      background: "표준 OBD-II 프로토콜은 모든 차량에서 공통적으로 사용할 수 있지만, 제공되는 데이터 항목이 제한적입니다. 사용자는 DPF 포집량, 변속기 오일 온도처럼 차량 유지보수에 필수적인 심층 데이터를 원했습니다. 이를 위해 각 제조사별(Hyundai/Kia, GM, BMW 등) 독자 규격(Proprietary Protocol)을 역공학하거나 문서화하여 앱에 통합하는 작업이 필요했습니다.",
+      period: "2023.03 ~ 2025.12",
+      background: "핵심 기능 외에도 개발 생산성 향상을 위한 CI/CD 파이프라인 구축, 사용자 참여도를 높이기 위한 게이미피케이션 시스템, 프리미엄 기능인 제조사 전용 데이터 제공 등 다양한 작업을 수행했습니다.",
       tasks: [
         {
-          title: "MOBD 프로파일 관리",
+          title: "CI/CD Pipeline (GitHub Actions)",
           items: [
-            "프로파일 목록 조회: 차량별 지원 가능한 프로파일 표시",
-            "프로파일 구매 상태: 구매/미구매 상태 구분",
-            "프로파일 정렬: 최근 사용/다운로드 순으로 동적 정렬",
-            "구매한 프로파일 관리: updateTime 기반 정렬 정책"
+            "워크플로우 설계: master/develop 브랜치 push 시 자동 빌드/배포",
+            "Gradle 캐싱으로 빌드 시간 50% 단축",
+            "Slack 연동: 빌드 성공/실패 시 실시간 알림",
+            "Unit Test 환경: JUnit 5, Mockito, Jacoco 커버리지",
+            "Firebase App Distribution / Play Store 자동 배포"
           ]
         },
         {
-          title: "제조사 DB 다운로드 시스템",
+          title: "Infocar Manager (게이미피케이션)",
           items: [
-            "암호화 DB 다운로드: SQLCipher 암호화된 DB 파일",
-            "내부 저장소 저장: 보안을 위해 내부 저장소에 저장",
-            "버전 관리: 서버 버전과 로컬 버전 비교 후 업데이트",
-            "다운로드 프로그레스: 백그라운드 다운로드 및 진행률 표시",
-            "다운로드 예외 처리: 네트워크 오류, 저장소 부족 등 대응"
+            "WebView Bridge: JavaScript Interface로 Native-Web 양방향 통신",
+            "미션 시스템: 진단, 주행 등 앱 기능과 연동된 미션 달성 추적",
+            "Orbit MVI 적용: 단방향 데이터 플로우로 상태 관리",
+            "웹뷰 Pre-warming으로 로딩 속도 개선"
           ]
         },
         {
-          title: "데이터 조회 기능",
+          title: "Manufacturer Data (제조사 전용 데이터)",
           items: [
-            "조회 가능한 데이터 확인: 차량별 지원 항목 미리보기",
-            "제어 유닛 검색: ECU 목록 및 지원 PID 조회",
-            "데이터 표시: 실시간 제조사 데이터 모니터링",
-            "데이터 인덱싱: data_index 기반 효율적 조회"
-          ]
-        },
-        {
-          title: "구매 유도 시스템",
-          items: [
-            "프로모션 다이얼로그: 제조사 데이터 구매 유도 팝업",
-            "배너 광고 연동: 메인 페이지 배너 광고",
-            "태블릿 대응: 가로 모드 시 이미지 추가",
-            "N일 보지 않기: 다이얼로그 노출 빈도 제어"
-          ]
-        },
-        {
-          title: "UX 개선",
-          items: [
-            "랜딩 페이지: 제조사 데이터 소개 및 기능 설명",
-            "도움말 페이지: FAQ 및 사용 방법 안내",
-            "프로파일 리스트 레이아웃: 제조사 로고, 차량 정보 표시"
-          ]
-        },
-        {
-          title: "제조사 진단 기능",
-          items: [
-            "제조사 고장 코드 조회: 표준 외 제조사별 고유 DTC",
-            "상세 설명 제공: 고장 코드별 원인 및 해결 방법",
-            "진단 내역 저장: 제조사 진단 결과 별도 관리"
+            "MOBD 프로파일 관리: 차량별 지원 프로파일 표시 및 구매 상태 관리",
+            "암호화 DB 다운로드: SQLCipher로 보안 강화",
+            "제조사 진단: 표준 외 제조사별 고유 DTC 조회",
+            "데이터 주도 설계: PID 매핑 테이블로 다양한 차종 지원"
           ]
         }
       ],
-      techStack: ["Kotlin", "Room", "SQLCipher", "Retrofit", "DownloadManager", "SharedPreferences", "RecyclerView"],
+      techStack: ["GitHub Actions", "Kotlin", "WebView", "JavaScript Interface", "Orbit MVI", "Room", "SQLCipher", "Slack Webhook"],
       challenges: [
         {
-          title: "제조사별 상이한 PID(Parameter ID) 주소 체계 관리",
-          problem: "같은 '엔진 오일 온도'라도 현대차와 BMW의 PID 주소와 응답 수식이 완전히 다릅니다. 이를 하드코딩하면 유지보수가 불가능해지는 문제가 있었습니다.",
-          solution: "제조사, 연식, 엔진 타입에 따른 PID 매핑 테이블을 SQLite DB로 구축하고, 런타임에 차량 정보에 맞춰 동적으로 쿼리하여 프로토콜을 설정하는 데이터 주도(Data-Driven) 설계를 적용했습니다."
+          title: "CI/CD 빌드 환경 일관성 및 보안",
+          problem: "개발자마다 환경이 달라 빌드 결과물이 상이하고, Keystore 등 민감 정보 관리가 필요했습니다.",
+          solution: "GitHub Secrets로 민감 정보 암호화 저장, Docker 기반 클린 빌드 환경 구축"
         },
         {
-          title: "CAN 통신 속도 및 메시지 필터링",
-          problem: "제조사 확장 데이터는 표준 데이터보다 훨씬 높은 빈도로 CAN 버스에 흘러다니므로, 필요한 데이터만 정확히 캐치하지 않으면 버퍼 오버플로우가 발생할 수 있습니다.",
-          solution: "ELM327 칩셋의 하드웨어 필터링 기능(AT commands)을 활용하여 원하는 헤더(Header)를 가진 메시지만 수신하도록 설정, 앱 단의 데이터 처리 부하를 70% 이상 감소시켰습니다."
+          title: "Native-Web 간 비동기 통신",
+          problem: "JavaScript Interface는 동기적으로 값 반환이 어려운 구조였습니다.",
+          solution: "요청 ID 기반 메시지 큐 시스템으로 비동기 데이터 주입 패턴 정립"
+        },
+        {
+          title: "제조사별 PID 주소 체계 관리",
+          problem: "같은 데이터라도 제조사마다 PID 주소와 응답 수식이 다릅니다.",
+          solution: "SQLite DB 기반 PID 매핑 테이블로 데이터 주도(Data-Driven) 설계 적용"
         }
       ],
       results: [
-        "표준 OBD 데이터 대비 3배 이상의 데이터 항목(DPF, 배터리 셀 등) 제공",
-        "프리미엄 구독 전환율 20% 상승의 핵심 기능으로 자리매김",
-        "신규 차종 지원 요청 처리 시간 1주 → 2일로 단축"
+        "빌드 및 배포 소요 시간 90% 단축",
+        "하이브리드 앱 아키텍처 사내 표준 프레임워크 등재",
+        "프리미엄 구독 전환율 20% 상승"
       ]
     }
   },
@@ -962,6 +793,80 @@ export const BENTO_ITEMS: BentoItemProps[] = [
         "코드 중복 제거로 신규 위젯 개발 속도 50% 단축",
         "단일 모듈로 두 개의 메인 앱(B2C, B2B) 동시 지원 체계 구축",
         "실시간 데이터 시각화 프레임 드랍 0%에 가까운 최적화 달성"
+      ]
+    }
+  },
+  {
+    id: 'car-ledger',
+    title: '차계부 및 정비 관리',
+    subtitle: '차량 유지비 통합 관리',
+    description: '차량 유지비(주유/정비/세차)를 기록하고 분석하는 통합 관리 시스템입니다.',
+    icon: Receipt,
+    cols: 2,
+    dark: true,
+    details: {
+      period: "2022.07.29 ~ 현재",
+      background: "차량 유지비를 단순히 '얼마 썼다' 수준으로 기록하는 것은 사용자에게 실질적인 가치를 주지 못했습니다. 사용자는 주유 시 가장 가까운 주유소를 찾고, 정비 이력을 한눈에 보고, 영수증을 사진으로 보관하고 싶어했습니다. 이를 위해 위치 기반 검색, 영수증 서버 동기화, 소모품 주기 관리 등 실용적인 기능이 필요했습니다.",
+      tasks: [
+        {
+          title: "주유/정비/세차 기록 시스템",
+          items: [
+            "카테고리별 입력 UI: 주유량, 단가, 총액, 주행거리 등 항목별 커스텀 키패드 구현",
+            "연비 자동 계산: 주유량과 주행거리 기반 실연비 계산 로직",
+            "기간별 필터링: 월별/연도별 기록 조회 및 통계 제공",
+            "하이브리드/전기차 지원: 연료 타입별 단위(L, kWh) 자동 전환"
+          ]
+        },
+        {
+          title: "영수증 사진 관리",
+          items: [
+            "카메라/갤러리 연동: ActivityResultLauncher 기반 사진 촬영 및 선택",
+            "서버 동기화: Retrofit + MultipartBody로 영수증 이미지 업로드",
+            "로컬 캐싱: FileProvider 활용 내부 저장소 관리",
+            "복구 기능: 앱 재설치 시 서버에서 영수증 다운로드"
+          ]
+        },
+        {
+          title: "위치 기반 주유소/정비소 검색",
+          items: [
+            "Google Maps API: 현재 위치 기반 가까운 주유소 마커 표시",
+            "실시간 유가 정보: 주유소별 가격 정보 API 연동",
+            "검색 히스토리: 최근 검색한 장소 저장 및 빠른 선택",
+            "직접 입력: 지도에 없는 장소 수동 등록 지원"
+          ]
+        },
+        {
+          title: "소모품 관리",
+          items: [
+            "소모품 주기 관리: 엔진오일, 타이어, 브레이크 패드 등 교체 주기 알림",
+            "커스텀 항목: 사용자 정의 소모품 추가 기능",
+            "정비 항목 연동: 정비 기록 시 소모품 자동 업데이트"
+          ]
+        }
+      ],
+      techStack: ["Java", "SQLite", "Retrofit", "Google Maps API", "ViewBinding", "RxJava", "FileProvider", "OkHttp"],
+      challenges: [
+        {
+          title: "레거시 DB 마이그레이션",
+          problem: "기존 버전의 DB 스키마가 새로운 기능을 지원하지 않았고, 기존 사용자 데이터를 잃지 않으면서 새 스키마로 전환해야 했습니다.",
+          solution: "SQLite 마이그레이션 로직을 단계별로 설계하여 버전별 스키마 변경을 자동 처리했습니다. 기존 REPAIR 테이블을 REPAIR + REPAIR_ITEM으로 정규화하고, CONSUMABLE 테이블을 추가하여 소모품 관리 기능을 확장했습니다."
+        },
+        {
+          title: "영수증 사진 서버 동기화",
+          problem: "사용자가 앱을 삭제하거나 기기를 변경하면 로컬에 저장된 영수증 사진이 모두 사라지는 문제가 있었습니다.",
+          solution: "Retrofit MultipartBody를 활용하여 영수증 이미지를 서버에 업로드하고, 복구 API를 통해 재설치 시 자동으로 다운로드되도록 구현했습니다. iOS와 API 스펙을 통일하여 크로스 플랫폼 데이터 호환성을 확보했습니다."
+        },
+        {
+          title: "주유소 검색 최적화",
+          problem: "현재 위치 기반 주유소 검색 시 API 응답 지연으로 인해 사용자가 빈 화면을 오래 보는 UX 문제가 있었습니다.",
+          solution: "로딩 상태 표시와 함께 비동기 로딩을 적용하고, 검색 결과를 캐싱하여 동일 위치에서 재검색 시 즉시 표시되도록 개선했습니다. 중복 API 호출 방지 로직도 추가하여 서버 부하를 줄였습니다."
+        }
+      ],
+      results: [
+        "영수증 서버 동기화로 데이터 복구 체계 구축",
+        "레거시 DB 마이그레이션으로 기존 사용자 데이터 100% 보존",
+        "위치 기반 주유소/주차장/세차장 통합 검색 기능 구현",
+        "384회 커밋을 통한 3년간 지속적 기능 개선 및 유지보수"
       ]
     }
   },
