@@ -35,6 +35,9 @@ const PhysicsBento: React.FC = () => {
   const requestRef = useRef<number>();
   const elementsRef = useRef<(HTMLDivElement | null)[]>([]);
 
+  // 화면 너비를 State로 관리하여 렌더링에 직접 반영
+  const [currentScale, setCurrentScale] = React.useState<number>(1);
+
   const handleProjectClick = (id: string) => {
     // 1. 해당 ID를 가진 요소 찾기
     const element = document.getElementById(id);
@@ -54,84 +57,90 @@ const PhysicsBento: React.FC = () => {
     });
   };
 
-  // 물리 엔진 초기화 및 루프
+  // 물리 엔진 및 리사이즈 처리
   useEffect(() => {
     if (!containerRef.current) return;
 
     const container = containerRef.current;
-    const { width, height } = container.getBoundingClientRect();
 
     // 초기화: 버블 생성
     if (bubblesRef.current.length === 0) {
+      const { width, height } = container.getBoundingClientRect();
       bubblesRef.current = BENTO_ITEMS.map((item, index) => {
-        // cols가 2면 더 큰 반지름 (중요도 표시)
-        const radius = item.cols === 2 ? 140 : 100; // 픽셀 단위 반지름
+        // 기본 Radius (PC 기준)
+        const baseRadius = item.cols === 2 ? 140 : 100;
 
         return {
           id: item.id,
-          // 화면 중앙 부근에서 랜덤 시작
-          x: Math.random() * (width - radius * 2) + radius,
-          y: Math.random() * (height - radius * 2) + radius,
-          // 랜덤 속도 (-1.5 ~ 1.5)
+          x: Math.random() * (width - baseRadius * 2) + baseRadius,
+          y: Math.random() * (height - baseRadius * 2) + baseRadius,
           vx: (Math.random() - 0.5) * 3,
           vy: (Math.random() - 0.5) * 3,
-          radius,
-          mass: radius // 질량은 크기에 비례
+          radius: baseRadius, // 초기값
+          mass: baseRadius
         };
       });
     }
 
+    // 리사이즈 핸들러
+    const handleResize = () => {
+      const { width, height } = container.getBoundingClientRect();
+
+      // 스케일 계산 로직 (모바일/태블릿/PC 대응)
+      let newScale = 1;
+      if (width < 768) newScale = 0.55;      // 모바일 (<768px)
+      else if (width < 1024) newScale = 0.75; // 태블릿 (<1024px)
+      // 그 외 PC (>=1024px) -> 1.0
+
+      setCurrentScale(newScale);
+
+      // 물리 엔진 body 업데이트
+      bubblesRef.current.forEach(b => {
+        b.radius = b.mass * newScale; // mass는 초기 radius와 동일
+        b.x = Math.min(Math.max(b.x, b.radius), width - b.radius);
+        b.y = Math.min(Math.max(b.y, b.radius), height - b.radius);
+      });
+    };
+
+    // 초기 실행 및 리스너 등록
+    handleResize();
+    window.addEventListener('resize', handleResize);
+
+    // 물리 엔진 루프
     const updatePhysics = () => {
       const bubbles = bubblesRef.current;
       const rect = container.getBoundingClientRect();
       const containerW = rect.width;
       const containerH = rect.height;
 
-      // 1. 위치 업데이트 및 벽 충돌 처리
+      // 1. 위치 업데이트 및 벽 충돌
       bubbles.forEach(b => {
         b.x += b.vx;
         b.y += b.vy;
 
-        // 벽 충돌 (좌우)
-        if (b.x - b.radius < 0) {
-          b.x = b.radius;
-          b.vx *= -1;
-        } else if (b.x + b.radius > containerW) {
-          b.x = containerW - b.radius;
-          b.vx *= -1;
-        }
+        if (b.x - b.radius < 0) { b.x = b.radius; b.vx *= -1; }
+        else if (b.x + b.radius > containerW) { b.x = containerW - b.radius; b.vx *= -1; }
 
-        // 벽 충돌 (상하)
-        if (b.y - b.radius < 0) {
-          b.y = b.radius;
-          b.vy *= -1;
-        } else if (b.y + b.radius > containerH) {
-          b.y = containerH - b.radius;
-          b.vy *= -1;
-        }
+        if (b.y - b.radius < 0) { b.y = b.radius; b.vy *= -1; }
+        else if (b.y + b.radius > containerH) { b.y = containerH - b.radius; b.vy *= -1; }
       });
 
-      // 2. 버블 간 충돌 처리 (Elastic Collision)
+      // 2. 버블 간 충돌
       for (let i = 0; i < bubbles.length; i++) {
         for (let j = i + 1; j < bubbles.length; j++) {
           const b1 = bubbles[i];
           const b2 = bubbles[j];
-
           const dx = b2.x - b1.x;
           const dy = b2.y - b1.y;
           const distance = Math.sqrt(dx * dx + dy * dy);
           const minDistance = b1.radius + b2.radius;
 
           if (distance < minDistance) {
-            // 충돌 감지!
-
-            // 겹침 수정 (Overlap Correction) - 서로 붙지 않게 밀어냄
             const overlap = minDistance - distance;
             const nx = dx / distance;
             const ny = dy / distance;
-
-            // 무게에 따라 밀려나는 정도 조정
             const totalMass = b1.mass + b2.mass;
+
             const m1Ratio = b2.mass / totalMass;
             const m2Ratio = b1.mass / totalMass;
 
@@ -140,10 +149,7 @@ const PhysicsBento: React.FC = () => {
             b2.x += nx * overlap * m2Ratio;
             b2.y += ny * overlap * m2Ratio;
 
-            // 속도 벡터 반사 (Elastic Collision Physics)
-            // v1' = v1 - 2*m2/(m1+m2) * <v1-v2, n> * n
             const k = 2 * (b1.vx * nx + b1.vy * ny - b2.vx * nx - b2.vy * ny) / (b1.mass + b2.mass);
-
             b1.vx -= k * b2.mass * nx;
             b1.vy -= k * b2.mass * ny;
             b2.vx += k * b1.mass * nx;
@@ -152,11 +158,10 @@ const PhysicsBento: React.FC = () => {
         }
       }
 
-      // 3. DOM 업데이트 (직접 조작으로 리액트 렌더링 사이클 우회 -> 고성능)
+      // 3. DOM 업데이트
       bubbles.forEach((b, i) => {
         const el = elementsRef.current[i];
         if (el) {
-          // 중앙 정렬을 위해 transform 사용
           el.style.transform = `translate(${b.x - b.radius}px, ${b.y - b.radius}px)`;
         }
       });
@@ -167,48 +172,9 @@ const PhysicsBento: React.FC = () => {
     requestRef.current = requestAnimationFrame(updatePhysics);
 
     return () => {
+      window.removeEventListener('resize', handleResize);
       if (requestRef.current) cancelAnimationFrame(requestRef.current);
     };
-  }, []);
-
-  // 화면 리사이즈 대응 및 반경 업데이트
-  useEffect(() => {
-    const handleResize = () => {
-      if (!containerRef.current) return;
-      const { width, height } = containerRef.current.getBoundingClientRect();
-
-      // 화면 너비에 따른 스케일 계산
-      let currentScale = 1;
-      if (width < 768) currentScale = 0.55; // 모바일
-      else if (width < 1024) currentScale = 0.75; // 태블릿
-
-      // React State 업데잇
-      // (여기서는 성능을 위해 Ref로 관리하거나, 간단히 forceUpdate를 유도할 수도 있지만
-      //  Physics loop에서 DOM 스타일을 직접 찍으므로, DOM 크기만 맞춰주면 됨.
-      //  하지만 컴포넌트 렌더링 시 sizePx 계산을 위해 state가 필요함.)
-      //  -> 간단히 window resize 시 전체 리렌더링이 일어나도록 하거나,
-      //     여기서는 버블 초기화 로직을 다시 태우는 게 깔끔함.
-
-      // 버블 크기 및 위치 재조정
-      bubblesRef.current.forEach(b => {
-        // 원래 반경 복원 후 스케일 적용 (2 cols: 140, 1 col: 100)
-        // b.radius는 가변적이므로, ID나 기타 속성으로 원본 크기를 유추해야 함.
-        // 여기서는 BENTO_ITEMS 순서가 보장되므로 인덱스로 매핑 가능하지만,
-        // 안전하게 mass(초기 radius와 동일)를 기준으로 다시 계산
-        const baseRadius = b.mass; // mass는 초기 radius로 설정했음
-        b.radius = baseRadius * currentScale;
-
-        // 화면 밖으로 나가는 것 방지
-        b.x = Math.min(Math.max(b.x, b.radius), width - b.radius);
-        b.y = Math.min(Math.max(b.y, b.radius), height - b.radius);
-      });
-    };
-
-    window.addEventListener('resize', handleResize);
-    // 초기 실행
-    handleResize();
-
-    return () => window.removeEventListener('resize', handleResize);
   }, []);
 
   return (
@@ -233,45 +199,71 @@ const PhysicsBento: React.FC = () => {
           const colorTheme = BRIGHT_COLORS[index % BRIGHT_COLORS.length];
           const isLarge = item.cols === 2;
 
+          // 동적 크기 계산 (Physics와 동기화)
+          const baseRadius = isLarge ? 140 : 100;
+          const radius = baseRadius * currentScale;
+          const sizePx = radius * 2;
+
           return (
             <div
               key={item.id}
               ref={(el) => (elementsRef.current[index] = el)}
               onClick={() => handleProjectClick(item.id)}
               style={{
+                width: `${sizePx}px`,
+                height: `${sizePx}px`,
                 position: 'absolute',
                 top: 0,
                 left: 0,
-                willChange: 'transform, width, height',
+                willChange: 'transform, width, height', // 사이즈 변경 최적화
               }}
-              // Tailwind 클래스로 반응형 크기 지정 (Physics 엔진의 Radius와 일치해야 함)
-              // PC: Norm 200(r100), Large 280(r140)
-              // Tab(0.75): Norm 150(r75), Large 210(r105)
-              // Mob(0.55): Norm 110(r55), Large 154(r77)
               className={`
-                w-[110px] h-[110px] md:w-[150px] md:h-[150px] lg:w-[200px] lg:h-[200px]
-                ${isLarge ? 'w-[154px] h-[154px] md:w-[210px] md:h-[210px] lg:w-[280px] lg:h-[280px]' : ''}
                 rounded-full border-4 cursor-pointer shadow-lg
-                flex flex-col items-center justify-center text-center p-2 md:p-4
+                flex flex-col items-center justify-center text-center p-2 
                 transition-shadow duration-300 hover:shadow-2xl hover:z-50
                 ${colorTheme.bg} ${colorTheme.border} ${colorTheme.text}
               `}
             >
-              <div className={`p-2 md:p-3 rounded-full mb-1 md:mb-3 ${colorTheme.iconBg} ${colorTheme.iconColor} shadow-sm scale-75 md:scale-100`}>
-                <item.icon size={isLarge ? 32 : 24} strokeWidth={2.5} />
+              <div
+                className={`rounded-full mb-1 shadow-sm flex items-center justify-center ${colorTheme.iconBg} ${colorTheme.iconColor}`}
+                style={{
+                  padding: `${12 * currentScale}px`,
+                  marginBottom: `${12 * currentScale}px`
+                }}
+              >
+                <item.icon size={isLarge ? 32 * currentScale : 24 * currentScale} strokeWidth={2.5} />
               </div>
 
-              <h3 className={`font-bold leading-tight mb-0.5 md:mb-1 px-1 md:px-2 ${isLarge ? 'text-sm md:text-2xl' : 'text-xs md:text-lg'}`}>
+              <h3
+                className={`font-bold leading-tight px-1`}
+                style={{
+                  fontSize: isLarge ? `${24 * currentScale}px` : `${18 * currentScale}px`,
+                  marginBottom: `${4 * currentScale}px`
+                }}
+              >
                 {item.title}
               </h3>
 
-              <p className="text-[10px] md:text-xs font-semibold opacity-70 mb-1 md:mb-3 px-1 md:px-2 line-clamp-1 hidden sm:block">
+              <p
+                className="font-semibold opacity-70 px-1 line-clamp-1 hidden sm:block"
+                style={{
+                  fontSize: `${12 * currentScale}px`,
+                  marginBottom: `${12 * currentScale}px`
+                }}
+              >
                 {item.subtitle}
               </p>
 
-              <div className="flex flex-wrap justify-center gap-1 opacity-80 md:opacity-100">
+              <div className="flex flex-wrap justify-center gap-1 opacity-80">
                 {item.details.techStack.slice(0, 2).map((tech, i) => (
-                  <span key={i} className="text-[8px] md:text-[10px] bg-white/60 px-1.5 py-0.5 rounded-full font-bold uppercase">
+                  <span
+                    key={i}
+                    className="bg-white/60 rounded-full font-bold uppercase"
+                    style={{
+                      fontSize: `${10 * currentScale}px`,
+                      padding: `${2 * currentScale}px ${6 * currentScale}px`
+                    }}
+                  >
                     {tech}
                   </span>
                 ))}
