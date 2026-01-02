@@ -30,7 +30,7 @@ const PhoneFrame: React.FC<PhoneFrameProps> = ({ children }) => {
   };
 
   return (
-    <div className="relative w-[440px] h-[800px] mx-auto">
+    <div className="relative w-[440px] h-[calc(100vh-4rem)] max-h-[800px] mx-auto">
       {/* Tablet Frame - 베젤 */}
       <div className={`relative rounded-[2.5rem] p-4 shadow-2xl border-4 h-full ${
         isDark
