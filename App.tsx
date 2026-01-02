@@ -8,7 +8,7 @@ import Footer from './components/Footer';
 
 function App() {
   return (
-    <div className="bg-slate-50 font-sans selection:bg-primary-200 selection:text-primary-900 w-full min-h-screen">
+    <div className="bg-slate-900 font-sans selection:bg-primary-600 selection:text-white w-full min-h-screen">
       <Header />
       
       <main>

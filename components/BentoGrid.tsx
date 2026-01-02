@@ -3,19 +3,19 @@ import { BENTO_ITEMS } from '../constants';
 import { ArrowUpRight } from 'lucide-react';
 import { BentoItemProps } from '../types';
 
-// 밝고 트렌디한 색상 팔레트
-const BRIGHT_COLORS = [
-  { bg: 'bg-rose-100', text: 'text-rose-900', border: 'border-rose-200', iconBg: 'bg-white', iconColor: 'text-rose-600' },
-  { bg: 'bg-orange-100', text: 'text-orange-900', border: 'border-orange-200', iconBg: 'bg-white', iconColor: 'text-orange-600' },
-  { bg: 'bg-amber-100', text: 'text-amber-900', border: 'border-amber-200', iconBg: 'bg-white', iconColor: 'text-amber-600' },
-  { bg: 'bg-lime-100', text: 'text-lime-900', border: 'border-lime-200', iconBg: 'bg-white', iconColor: 'text-lime-600' },
-  { bg: 'bg-emerald-100', text: 'text-emerald-900', border: 'border-emerald-200', iconBg: 'bg-white', iconColor: 'text-emerald-600' },
-  { bg: 'bg-teal-100', text: 'text-teal-900', border: 'border-teal-200', iconBg: 'bg-white', iconColor: 'text-teal-600' },
-  { bg: 'bg-cyan-100', text: 'text-cyan-900', border: 'border-cyan-200', iconBg: 'bg-white', iconColor: 'text-cyan-600' },
-  { bg: 'bg-sky-100', text: 'text-sky-900', border: 'border-sky-200', iconBg: 'bg-white', iconColor: 'text-sky-600' },
-  { bg: 'bg-indigo-100', text: 'text-indigo-900', border: 'border-indigo-200', iconBg: 'bg-white', iconColor: 'text-indigo-600' },
-  { bg: 'bg-violet-100', text: 'text-violet-900', border: 'border-violet-200', iconBg: 'bg-white', iconColor: 'text-violet-600' },
-  { bg: 'bg-fuchsia-100', text: 'text-fuchsia-900', border: 'border-fuchsia-200', iconBg: 'bg-white', iconColor: 'text-fuchsia-600' },
+// 다크모드용 색상 팔레트
+const DARK_COLORS = [
+  { bg: 'bg-rose-900/80', text: 'text-rose-100', border: 'border-rose-700', iconBg: 'bg-rose-800', iconColor: 'text-rose-300' },
+  { bg: 'bg-orange-900/80', text: 'text-orange-100', border: 'border-orange-700', iconBg: 'bg-orange-800', iconColor: 'text-orange-300' },
+  { bg: 'bg-amber-900/80', text: 'text-amber-100', border: 'border-amber-700', iconBg: 'bg-amber-800', iconColor: 'text-amber-300' },
+  { bg: 'bg-lime-900/80', text: 'text-lime-100', border: 'border-lime-700', iconBg: 'bg-lime-800', iconColor: 'text-lime-300' },
+  { bg: 'bg-emerald-900/80', text: 'text-emerald-100', border: 'border-emerald-700', iconBg: 'bg-emerald-800', iconColor: 'text-emerald-300' },
+  { bg: 'bg-teal-900/80', text: 'text-teal-100', border: 'border-teal-700', iconBg: 'bg-teal-800', iconColor: 'text-teal-300' },
+  { bg: 'bg-cyan-900/80', text: 'text-cyan-100', border: 'border-cyan-700', iconBg: 'bg-cyan-800', iconColor: 'text-cyan-300' },
+  { bg: 'bg-sky-900/80', text: 'text-sky-100', border: 'border-sky-700', iconBg: 'bg-sky-800', iconColor: 'text-sky-300' },
+  { bg: 'bg-indigo-900/80', text: 'text-indigo-100', border: 'border-indigo-700', iconBg: 'bg-indigo-800', iconColor: 'text-indigo-300' },
+  { bg: 'bg-violet-900/80', text: 'text-violet-100', border: 'border-violet-700', iconBg: 'bg-violet-800', iconColor: 'text-violet-300' },
+  { bg: 'bg-fuchsia-900/80', text: 'text-fuchsia-100', border: 'border-fuchsia-700', iconBg: 'bg-fuchsia-800', iconColor: 'text-fuchsia-300' },
 ];
 
 // 물리 엔진용 타입
@@ -186,13 +186,13 @@ const PhysicsBento: React.FC = () => {
   }, []);
 
   return (
-    <section className="min-h-screen relative overflow-hidden bg-slate-50 flex flex-col">
+    <section className="min-h-screen relative overflow-hidden bg-slate-900 flex flex-col">
       {/* Title Area */}
       <div className="pt-24 pb-8 text-center z-10 pointer-events-none px-4">
-        <h2 className="text-4xl md:text-6xl font-extrabold text-slate-900 mb-4 tracking-tight">
+        <h2 className="text-4xl md:text-6xl font-extrabold text-white mb-4 tracking-tight">
           Project Universe
         </h2>
-        <p className="text-slate-600 text-lg md:text-xl max-w-2xl mx-auto break-keep">
+        <p className="text-slate-400 text-lg md:text-xl max-w-2xl mx-auto break-keep">
           톡톡 튀는 아이디어들이 모여 만들어낸 결과물입니다.<br className="hidden md:block" />
           원을 클릭하여 상세 내용을 확인하세요.
         </p>
@@ -204,7 +204,7 @@ const PhysicsBento: React.FC = () => {
         className="flex-1 w-full h-[60vh] md:h-[80vh] relative overflow-hidden touch-none"
       >
         {BENTO_ITEMS.map((item, index) => {
-          const colorTheme = BRIGHT_COLORS[index % BRIGHT_COLORS.length];
+          const colorTheme = DARK_COLORS[index % DARK_COLORS.length];
           const isLarge = item.cols === 2;
 
           // 동적 크기 계산 (Physics와 동기화)
@@ -266,7 +266,7 @@ const PhysicsBento: React.FC = () => {
                 {item.details.techStack.slice(0, 2).map((tech, i) => (
                   <span
                     key={i}
-                    className="bg-white/60 rounded-full font-bold uppercase"
+                    className="bg-black/30 rounded-full font-bold uppercase"
                     style={{
                       fontSize: `${10 * currentScale}px`,
                       padding: `${2 * currentScale}px ${6 * currentScale}px`

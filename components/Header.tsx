@@ -15,28 +15,28 @@ const Header: React.FC = () => {
 
   return (
     <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-      scrolled ? 'bg-white/80 backdrop-blur-md shadow-sm py-4' : 'bg-transparent py-6'
+      scrolled ? 'bg-slate-900/90 backdrop-blur-md shadow-lg py-4' : 'bg-transparent py-6'
     }`}>
       <div className="max-w-6xl mx-auto px-6 flex justify-between items-center">
         <div className="flex items-center gap-2">
-          <span className="font-bold text-xl tracking-tight text-slate-900">
+          <span className="font-bold text-xl tracking-tight text-white">
             {PERSONAL_INFO.name}
           </span>
         </div>
-        
+
         <nav className="flex items-center gap-6">
-          <a 
-            href={PERSONAL_INFO.github} 
-            target="_blank" 
+          <a
+            href={PERSONAL_INFO.github}
+            target="_blank"
             rel="noopener noreferrer"
-            className="text-slate-600 hover:text-primary-700 transition-colors"
+            className="text-slate-400 hover:text-primary-400 transition-colors"
             title="GitHub"
           >
             <Github size={20} />
           </a>
-          <a 
+          <a
             href={`mailto:${PERSONAL_INFO.email}`}
-            className="flex items-center gap-2 px-4 py-2 bg-slate-900 text-white rounded-full text-sm font-medium hover:bg-slate-700 transition-colors"
+            className="flex items-center gap-2 px-4 py-2 bg-primary-600 text-white rounded-full text-sm font-medium hover:bg-primary-500 transition-colors"
           >
             <Mail size={16} />
             <span>Contact</span>
